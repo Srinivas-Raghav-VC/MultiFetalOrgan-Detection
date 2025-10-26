@@ -19,15 +19,39 @@ import argparse
 import os
 import shutil
 from pathlib import Path
-from collections import defaultdict, Counter
+import collections
 from typing import Optional, Tuple, List, Dict
 
-from lxml import etree
-import numpy as np
-import cv2
-from PIL import Image
-from tqdm import tqdm
-import matplotlib.pyplot as plt
+# Optional imports with graceful fallbacks for local validation
+try:
+    from lxml import etree as _etree
+except Exception:
+    _etree = None
+import xml.etree.ElementTree as _xml_etree
+
+try:
+    import numpy as np
+except Exception:
+    np = None
+try:
+    import cv2
+except Exception:
+    cv2 = None
+try:
+    from PIL import Image
+except Exception:
+    Image = None
+try:
+    from tqdm import tqdm as _tqdm
+    def tqdm(iterable, **kwargs):
+        return _tqdm(iterable, **kwargs)
+except Exception:
+    def tqdm(iterable, **kwargs):
+        return iterable
+try:
+    import matplotlib.pyplot as plt
+except Exception:
+    plt = None
 
 
 CLASSES = ['Head', 'Abdomen', 'Arms', 'Legs']
@@ -48,14 +72,31 @@ def normalize_label(name: str) -> Optional[str]:
 
 
 def find_dataset_root(candidate: Path) -> Path:
-    # If candidate contains many XMLs, assume it is the root
+    """Resolve the dataset root robustly.
+
+    Accepts either of the following as --dataset-root:
+      - The actual dataset directory that contains annos/, boxes/, four_poses/
+      - The parent folder FPUS23_Dataset which itself contains a 'Dataset/' subfolder
+    """
+    # 1) If candidate exists and directly looks like a dataset root, prefer it
     if candidate.exists():
+        if (candidate / 'boxes' / 'annotation').exists() or (candidate / 'annos' / 'annotation').exists():
+            return candidate
+        # 2) If it has a nested 'Dataset/' folder with expected structure, use that
+        nested = candidate / 'Dataset'
+        if (nested / 'boxes' / 'annotation').exists() or (nested / 'annos' / 'annotation').exists():
+            return nested
+        # 3) Otherwise, fall back to heuristic: enough XMLs underneath
         n_xml = sum(1 for _ in candidate.rglob('*.xml'))
         if n_xml >= 10:
             return candidate
-    # Probe common siblings
-    for c in [Path('FPUS23'), Path('FPUS23_Dataset')/ 'Dataset', Path('FPUS23_Dataset')]:
+    # 4) Probe common relative locations
+    for c in [Path('FPUS23')
+             , Path('FPUS23_Dataset') / 'Dataset'
+             , Path('FPUS23_Dataset')]:
         if c.exists():
+            if (c / 'boxes' / 'annotation').exists() or (c / 'annos' / 'annotation').exists():
+                return c
             n_xml = sum(1 for _ in c.rglob('*.xml'))
             if n_xml >= 10:
                 return c
@@ -72,14 +113,22 @@ def collect_pairs(root: Path) -> List[Tuple[Path, Path]]:
 
 
 def find_cvat_aggregated_xmls(root: Path) -> List[Path]:
-    """Return CVAT aggregated XMLs from both annos/ and boxes/ directories"""
-    xs = []
-    # Check annos/annotation/<stream>/annotations.xml
-    if (root / 'annos' / 'annotation').exists():
-        xs.extend(list((root / 'annos' / 'annotation').rglob('annotations.xml')))
-    # Check boxes/annotation/<stream>/annotations.xml
-    if (root / 'boxes' / 'annotation').exists():
-        xs.extend(list((root / 'boxes' / 'annotation').rglob('annotations.xml')))
+    """Return CVAT aggregated annotations.xml files.
+
+    Be tolerant of being pointed at FPUS23_Dataset/ (parent) or FPUS23_Dataset/Dataset/ (actual root).
+    """
+    xs: List[Path] = []
+    candidates = [root]
+    # If user passed parent folder, also probe the nested Dataset/
+    if (root / 'Dataset').exists():
+        candidates.append(root / 'Dataset')
+    for base in candidates:
+        ann = base / 'annos' / 'annotation'
+        box = base / 'boxes' / 'annotation'
+        if ann.exists():
+            xs.extend(list(ann.rglob('annotations.xml')))
+        if box.exists():
+            xs.extend(list(box.rglob('annotations.xml')))
     return xs
 
 
@@ -107,12 +156,24 @@ def map_images_dir_for_xml(xml_path: Path) -> Optional[Path]:
     return None
 
 
+def _get_etree():
+    """Return best available etree API (lxml if available, else stdlib)."""
+    return _etree if _etree is not None else _xml_etree
+
+
 def parse_cvat_aggregated(xml_file: Path) -> List[Dict]:
     """Parse CVAT aggregated annotations.xml -> list of {'name': str, 'boxes': [(label, xtl, ytl, xbr, ybr)]} per image."""
     out = []
+    etree = _get_etree()
     rt = etree.parse(str(xml_file)).getroot()
     for img in rt.findall('.//image'):
         name = img.attrib.get('name') or img.attrib.get('id')
+        # Width/height often present in aggregated XML. Keep them for dry-run/no-PIL flow.
+        try:
+            w = int(float(img.attrib.get('width'))) if img.attrib.get('width') is not None else None
+            h = int(float(img.attrib.get('height'))) if img.attrib.get('height') is not None else None
+        except Exception:
+            w = h = None
         boxes = []
         for b in img.findall('.//box'):
             label = b.attrib.get('label', '')
@@ -122,7 +183,7 @@ def parse_cvat_aggregated(xml_file: Path) -> List[Dict]:
             except Exception:
                 continue
             boxes.append((label, xtl, ytl, xbr, ybr))
-        out.append({'name': name, 'boxes': boxes})
+        out.append({'name': name, 'boxes': boxes, 'width': w, 'height': h})
     return out
 
 
@@ -138,8 +199,7 @@ def split_pairs(pairs: List[Tuple[Path, Path]], group_split: bool, depth: int):
     import random
     random.seed(42)
     if group_split:
-        from collections import defaultdict
-        g = defaultdict(list)
+        g = collections.defaultdict(list)
         for xml, img in pairs:
             gid = group_id_from_path(xml, depth)
             g[gid].append((xml, img))
@@ -159,6 +219,21 @@ def split_pairs(pairs: List[Tuple[Path, Path]], group_split: bool, depth: int):
         val = pairs[n_tr:n_tr+n_va]
         test = pairs[n_tr+n_va:]
     return train, val, test
+
+
+def _voc_size_from_xml(xml_file: Path) -> Tuple[Optional[int], Optional[int]]:
+    """Try to read image width/height from a Pascal VOC-style XML (<size>)."""
+    try:
+        etree = _get_etree()
+        rt = etree.parse(str(xml_file)).getroot()
+        sz = rt.find('.//size')
+        if sz is not None:
+            w = sz.findtext('width'); h = sz.findtext('height')
+            if w and h:
+                return int(float(w)), int(float(h))
+    except Exception:
+        pass
+    return None, None
 
 
 def convert_xml_to_yolo(xml_file: Path, output_label: Path, img_w: int, img_h: int,
@@ -260,6 +335,7 @@ def main():
     ap.add_argument('--group-split', type=int, default=1, help='Leakage-safe grouped split (default=1)')
     ap.add_argument('--group-depth', type=int, default=1, help='How many directory levels to group by (default=1)')
     ap.add_argument('--coco-one-based', type=int, default=0, help='Use 1-based category IDs in COCO (default 0 uses 0-based)')
+    ap.add_argument('--dry-run', type=int, default=0, help='Only compute counts/splits; do not copy or write labels/images')
     # Optional minority-class intensity augmentations (bbox-safe)
     ap.add_argument('--augment-minority', type=int, default=0, help='Enable minority-class intensity augs for train (default=0)')
     ap.add_argument('--minority-classes', type=str, default='Head,Legs', help='Comma-separated classes to augment more')
@@ -282,7 +358,7 @@ def main():
     print(f" - XML files : {len(xmls)}")
 
     # Class distribution from XMLs
-    class_counts = defaultdict(int); unknown = Counter(); total = 0
+    class_counts = collections.defaultdict(int); unknown = collections.Counter(); total = 0
     for xf in tqdm(xmls, desc='Scanning labels'):
         try:
             rt = etree.parse(str(xf)).getroot()
@@ -311,15 +387,19 @@ def main():
     for k, v in sorted(class_counts.items(), key=lambda x: x[1], reverse=True):
         pct = v/total*100 if total else 0
         print(f" - {k}: {v} ({pct:.1f}%)")
-    # Plot
-    if class_counts:
-        plt.figure(figsize=(6,3.5))
-        ks, vs = list(class_counts.keys()), list(class_counts.values())
-        plt.bar(ks, vs, color='steelblue')
-        plt.title('FPUS23 Class Distribution (XML)')
-        plt.tight_layout()
-        plt.savefig(PROJECT / 'plots' / 'dataset_class_distribution.png', dpi=150, bbox_inches='tight')
-        plt.close()
+    # Plot (optional)
+    if class_counts and plt is not None:
+        try:
+            plt.figure(figsize=(6,3.5))
+            ks, vs = list(class_counts.keys()), list(class_counts.values())
+            plt.bar(ks, vs, color='steelblue')
+            plt.title('FPUS23 Class Distribution (XML)')
+            plt.tight_layout()
+            (PROJECT / 'plots').mkdir(parents=True, exist_ok=True)
+            plt.savefig(PROJECT / 'plots' / 'dataset_class_distribution.png', dpi=150, bbox_inches='tight')
+            plt.close()
+        except Exception:
+            pass
     if unknown:
         print('Unmapped labels (top 10):')
         for lb, ct in unknown.most_common(10):
@@ -328,9 +408,10 @@ def main():
     # Attempt simple xml<->image pairing; fall back to CVAT aggregated if too few pairs
     pairs = collect_pairs(DATASET)
     YOLO_ROOT = PROJECT / 'dataset' / 'fpus23_yolo'
-    for s in ['train','val','test']:
-        (YOLO_ROOT / 'images' / s).mkdir(parents=True, exist_ok=True)
-        (YOLO_ROOT / 'labels' / s).mkdir(parents=True, exist_ok=True)
+    if not args.dry_run:
+        for s in ['train','val','test']:
+            (YOLO_ROOT / 'images' / s).mkdir(parents=True, exist_ok=True)
+            (YOLO_ROOT / 'labels' / s).mkdir(parents=True, exist_ok=True)
     drop = {'zero': 0, 'oob': 0, 'written': 0}
 
     if len(pairs) > 1000:
@@ -341,12 +422,23 @@ def main():
         def process(split_pairs, split_name):
             ok = 0
             for xml, img in tqdm(split_pairs, desc=f'YOLO {split_name}'):
-                try:
-                    with Image.open(img) as im:
-                        w, h = im.size
-                except Exception:
+                # Get width/height from VOC XML if possible (avoids PIL dependency)
+                w, h = _voc_size_from_xml(xml)
+                if (w is None or h is None) and not args.dry_run:
+                    try:
+                        if Image is not None:
+                            with Image.open(img) as im:
+                                w, h = im.size
+                    except Exception:
+                        pass
+                if w is None or h is None:
+                    # Cannot compute normalized boxes without dimensions
                     continue
-                shutil.copy(img, YOLO_ROOT / 'images' / split_name / img.name)
+                if not args.dry_run:
+                    try:
+                        shutil.copy(img, YOLO_ROOT / 'images' / split_name / img.name)
+                    except Exception:
+                        pass
                 out_lab = YOLO_ROOT / 'labels' / split_name / (img.stem + '.txt')
                 if convert_xml_to_yolo(xml, out_lab, w, h, drop):
                     ok += 1; drop['written'] += 1
@@ -358,40 +450,80 @@ def main():
         # CVAT aggregated mode
         print("Detected CVAT aggregated annotations; building list per image ...")
         xmls = find_cvat_aggregated_xmls(DATASET)
-        items = []  # list of (image_path, [(label, xtl, ytl, xbr, ybr)])
+        print(f" - Aggregated XMLs found: {len(xmls)}")
+        if not xmls:
+            print("WARNING: No aggregated XMLs found under the provided --dataset-root.\n"
+                  "         If you passed FPUS23_Dataset/, try passing its 'Dataset/' subfolder,\n"
+                  "         or let the script auto-detect it with --dataset-root FPUS23_Dataset.")
+        # Build items with stream grouping and fallback to dimensions from XML
+        # items: list of (stream_name, img_path, width, height, boxes)
+        items = []
         for xf in xmls:
             images_dir = map_images_dir_for_xml(xf)
             if images_dir is None:
                 continue
+            stream = images_dir.name
             recs = parse_cvat_aggregated(xf)
             for r in recs:
                 img_name = Path(r['name']).name
                 img_path = images_dir / img_name
                 if img_path.exists() and r['boxes']:
-                    items.append((img_path, r['boxes']))
+                    w = r.get('width')
+                    h = r.get('height')
+                    items.append((stream, img_path, w, h, r['boxes']))
         print(f"Found {len(items)} annotated images in CVAT aggregated xmls")
-        # Split per image
+
+        # Leakage-safe grouping by stream if requested
         import random
         random.seed(42)
-        random.shuffle(items)
-        n = len(items); n_tr = int(0.8*n); n_va = int(0.1*n)
-        splits = {
-            'train': items[:n_tr],
-            'val': items[n_tr:n_tr+n_va],
-            'test': items[n_tr+n_va:]
-        }
-        # Write images and labels
+        if bool(args.group_split):
+            g: Dict[str, List] = collections.defaultdict(list)
+            for stream, img_path, w, h, boxes in items:
+                g[stream].append((img_path, w, h, boxes))
+            groups = list(g.keys())
+            random.shuffle(groups)
+            n = len(groups)
+            n_tr = int(0.8*n); n_va = int(0.1*n)
+            tr = set(groups[:n_tr]); va = set(groups[n_tr:n_tr+n_va])
+            splits = {
+                'train': [x for key in tr for x in g[key]],
+                'val'  : [x for key in va for x in g[key]],
+                'test' : [x for key in set(groups) - tr - va for x in g[key]],
+            }
+        else:
+            random.shuffle(items)
+            n = len(items); n_tr = int(0.8*n); n_va = int(0.1*n)
+            splits = {
+                'train': [(p, w, h, b) for _, p, w, h, b in items[:n_tr]],
+                'val'  : [(p, w, h, b) for _, p, w, h, b in items[n_tr:n_tr+n_va]],
+                'test' : [(p, w, h, b) for _, p, w, h, b in items[n_tr+n_va:]],
+            }
+
+        print("Split sizes:")
+        for s in ['train','val','test']:
+            print(f" - {s}: {len(splits[s])}")
+
+        # Write images and labels (or dry-run)
         for split_name, lst in splits.items():
             ok = 0
-            for img_path, boxes in tqdm(lst, desc=f'YOLO {split_name}'):
-                try:
-                    with Image.open(img_path) as im:
-                        w, h = im.size
-                except Exception:
+            for (img_path, w, h, boxes) in tqdm(lst, desc=f'YOLO {split_name}'):
+                # Prefer XML-provided dims; PIL only as fallback if available and not in dry-run
+                if (w is None or h is None) and not args.dry_run and Image is not None:
+                    try:
+                        with Image.open(img_path) as im:
+                            w, h = im.size
+                    except Exception:
+                        pass
+                if w is None or h is None:
+                    # Cannot produce normalized labels without dimensions; skip
                     continue
-                dest_img = YOLO_ROOT / 'images' / split_name / img_path.name
-                if not dest_img.exists():
-                    shutil.copy(img_path, dest_img)
+                if not args.dry_run:
+                    dest_img = YOLO_ROOT / 'images' / split_name / img_path.name
+                    if not dest_img.exists():
+                        try:
+                            shutil.copy(img_path, dest_img)
+                        except Exception:
+                            pass
                 yolo_lines = []
                 for (label, xtl, ytl, xbr, ybr) in boxes:
                     canon = normalize_label(label)
@@ -409,14 +541,15 @@ def main():
                         drop['oob'] += 1
                     yolo_lines.append(f"{cid} {xcen:.6f} {ycen:.6f} {bw:.6f} {bh:.6f}")
                 if yolo_lines:
-                    out_lab = YOLO_ROOT / 'labels' / split_name / (img_path.stem + '.txt')
-                    out_lab.write_text('\n'.join(yolo_lines))
+                    if not args.dry_run:
+                        out_lab = YOLO_ROOT / 'labels' / split_name / (img_path.stem + '.txt')
+                        out_lab.write_text('\n'.join(yolo_lines))
                     drop['written'] += 1; ok += 1
             print(f"YOLO conversion ({split_name}): {ok}/{len(lst)} annotations")
     print(f" - Dropped zero-area: {drop['zero']} | Clamped OOB: {drop['oob']} | Labels written: {drop['written']}")
 
     # Optional minority-class augmentation (intensity only, bbox-safe)
-    if args.augment_minority:
+    if args.augment_minority and not args.dry_run and cv2 is not None:
         print("Applying minority-class intensity augmentations on train split ...")
         min_cls = [c.strip() for c in args.minority_classes.split(',') if c.strip() in CLASSES]
         # Build per-image class presence for train
@@ -448,7 +581,9 @@ def main():
                 cla = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
                 return cla.apply(img)
         def aug_gamma(img):
-            gamma = float(np.random.uniform(0.8, 1.2))
+            gamma = 1.0
+            if np is not None:
+                gamma = float(np.random.uniform(0.8, 1.2))
             inv = 1.0/gamma
             table = np.array([((i/255.0)**inv)*255 for i in np.arange(256)]).astype('uint8')
             if img.ndim == 2:
@@ -492,23 +627,25 @@ def main():
             print(f"Augmented class {c}: +{added} images (target {target_add})")
 
     # data.yaml
-    data_yaml = (
-        f"path: {YOLO_ROOT}\n"
-        "train: images/train\nval: images/val\ntest: images/test\n\n"
-        f"nc: {len(CLASSES)}\n"
-        f"names: {CLASSES}\n"
-    )
-    (YOLO_ROOT / 'data.yaml').write_text(data_yaml)
-    print(f"Wrote {YOLO_ROOT/'data.yaml'}")
+    if not args.dry_run:
+        data_yaml = (
+            f"path: {YOLO_ROOT}\n"
+            "train: images/train\nval: images/val\ntest: images/test\n\n"
+            f"nc: {len(CLASSES)}\n"
+            f"names: {CLASSES}\n"
+        )
+        (YOLO_ROOT / 'data.yaml').write_text(data_yaml)
+        print(f"Wrote {YOLO_ROOT/'data.yaml'}")
 
     # COCO
-    COCO_ROOT = PROJECT / 'dataset' / 'fpus23_coco'
-    COCO_ROOT.mkdir(parents=True, exist_ok=True)
-    for s in ['train','val','test']:
-        (COCO_ROOT / s).mkdir(parents=True, exist_ok=True)
-    for s in ['train','val','test']:
-        yolo_to_coco(YOLO_ROOT, s, COCO_ROOT / f'{s}.json', one_based=bool(args.coco_one_based))
-        print(f"Wrote {COCO_ROOT/(s+'.json')}")
+    if not args.dry_run:
+        COCO_ROOT = PROJECT / 'dataset' / 'fpus23_coco'
+        COCO_ROOT.mkdir(parents=True, exist_ok=True)
+        for s in ['train','val','test']:
+            (COCO_ROOT / s).mkdir(parents=True, exist_ok=True)
+        for s in ['train','val','test']:
+            yolo_to_coco(YOLO_ROOT, s, COCO_ROOT / f'{s}.json', one_based=bool(args.coco_one_based))
+            print(f"Wrote {COCO_ROOT/(s+'.json')}")
 
 
 if __name__ == '__main__':
