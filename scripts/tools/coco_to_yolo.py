@@ -44,31 +44,47 @@ def parse_simple_yaml(yaml_path: Path) -> dict:
 
 
 def write_data_yaml(out_yaml: Path, yolo_root: Path, orig_yaml: Path | None) -> None:
-    root_str = str(yolo_root.resolve()).replace('\\', '/')
-    path_line = f"path: \"{root_str}\"\n"
+    """Write a YOLO data.yaml that points train to the balanced set and keeps
+    val/test pointing to the original (absolute paths to avoid root confusion).
+    """
+    train_abs = (yolo_root / 'images' / 'train').resolve()
+    val_abs = None
+    test_abs = None
 
-    train_line = "train: images/train\n"
-    val_line = "val: images/val\n"
-    test_line = "test: images/test\n"
     names_line = "names: ['Head','Abdomen','Arms','Legs']\n"  # default fallback
     nc_line = "nc: 4\n"
 
     if orig_yaml and Path(orig_yaml).exists():
         meta = parse_simple_yaml(Path(orig_yaml))
-        # Respect original val/test if possible
+        try:
+            orig_root = Path(meta.get('path', '')).expanduser().resolve()
+        except Exception:
+            orig_root = Path('.')
         val_rel = meta.get('val', 'images/val')
         test_rel = meta.get('test', 'images/test')
-        # Keep the relative paths (they will be resolved under new root at runtime)
-        val_line = f"val: {val_rel}\n"
-        test_line = f"test: {test_rel}\n"
+        val_abs = (orig_root / val_rel).resolve()
+        test_abs = (orig_root / test_rel).resolve()
         # Names/nc if present
-        if 'names' in meta:
+        if 'names' in meta and meta['names']:
             import yaml  # type: ignore
             names_line = f"names: {yaml.safe_dump(meta['names'], default_flow_style=True).strip()}\n"
-        if 'nc' in meta:
+        if 'nc' in meta and meta['nc']:
             nc_line = f"nc: {meta['nc']}\n"
 
-    out_yaml.write_text(path_line + train_line + val_line + test_line + "\n" + nc_line + names_line)
+    # Fallback if orig not provided
+    if val_abs is None:
+        val_abs = (yolo_root.parent / 'fpus23_yolo' / 'images' / 'val').resolve()
+    if test_abs is None:
+        test_abs = (yolo_root.parent / 'fpus23_yolo' / 'images' / 'test').resolve()
+
+    txt = []
+    # Do NOT set 'path'; use absolute split paths to avoid ambiguity
+    txt.append(f"train: {str(train_abs).replace('\\\\','/')}\n")
+    txt.append(f"val: {str(val_abs).replace('\\\\','/')}\n")
+    txt.append(f"test: {str(test_abs).replace('\\\\','/')}\n\n")
+    txt.append(nc_line)
+    txt.append(names_line)
+    out_yaml.write_text(''.join(txt))
 
 
 def main():
@@ -152,4 +168,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

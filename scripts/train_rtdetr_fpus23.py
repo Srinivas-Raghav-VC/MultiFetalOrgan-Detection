@@ -75,6 +75,11 @@ class CocoFPUS23(Dataset):
         self.coco = COCO(str(annot_json))
         self.ids = self.coco.getImgIds()
         self.processor = processor
+        # Determine if category ids are 0-based or 1-based
+        try:
+            self._min_cat_id = min(self.coco.cats.keys()) if self.coco.cats else 0
+        except Exception:
+            self._min_cat_id = 0
 
         print(f"Loaded {split} set: {len(self.ids)} images")
 
@@ -99,8 +104,11 @@ class CocoFPUS23(Dataset):
             # RT-DETR expects: [x_min, y_min, x_max, y_max] normalized
             x, y, w, h = ann['bbox']
             boxes.append([x, y, x + w, y + h])
-            # Category IDs are 1-indexed, convert to 0-indexed
-            classes.append(ann['category_id'] - 1)
+            # Category IDs may be 0- or 1-indexed; normalize to 0-indexed
+            cid = ann['category_id']
+            if self._min_cat_id == 1:
+                cid = cid - 1
+            classes.append(cid)
 
         # Process inputs
         target = {
@@ -245,7 +253,15 @@ def main():
     ap.add_argument('--annotations-dir', type=str, required=True,
                     help='Path to COCO annotations directory')
     ap.add_argument('--images-dir', type=str, required=True,
-                    help='Path to images directory')
+                    help='Path to COCO image root (contains train/, val/) OR a specific split dir')
+    ap.add_argument('--train-json', type=str, default=None,
+                    help='Optional explicit path to train.json (overrides --annotations-dir)')
+    ap.add_argument('--val-json', type=str, default=None,
+                    help='Optional explicit path to val.json (overrides --annotations-dir)')
+    ap.add_argument('--train-images', type=str, default=None,
+                    help='Optional explicit path to train images dir (overrides --images-dir heuristics)')
+    ap.add_argument('--val-images', type=str, default=None,
+                    help='Optional explicit path to val images dir (overrides --images-dir heuristics)')
 
     # Model configuration
     ap.add_argument('--model', type=str, default='PekingU/rtdetr_r50vd',
@@ -287,8 +303,8 @@ def main():
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    train_json = annotations_dir / 'train.json'
-    val_json = annotations_dir / 'val.json'
+    train_json = Path(args.train_json) if args.train_json else (annotations_dir / 'train.json')
+    val_json = Path(args.val_json) if args.val_json else (annotations_dir / 'val.json')
 
     if not train_json.exists():
         raise FileNotFoundError(f"Training annotations not found: {train_json}")
@@ -324,15 +340,23 @@ def main():
 
     # Create datasets
     print("\nCreating datasets...")
+    # Heuristic: if images_dir contains split subfolders, use them; else allow explicit overrides
+    train_images = Path(args.train_images) if args.train_images else (
+        (images_dir / 'train') if (images_dir / 'train').exists() else images_dir
+    )
+    val_images = Path(args.val_images) if args.val_images else (
+        (images_dir / 'val') if (images_dir / 'val').exists() else images_dir
+    )
+
     train_dataset = CocoFPUS23(
-        images_dir=images_dir,
+        images_dir=train_images,
         annot_json=train_json,
         processor=processor,
         split='train'
     )
 
     val_dataset = CocoFPUS23(
-        images_dir=images_dir,
+        images_dir=val_images,
         annot_json=val_json,
         processor=processor,
         split='val'
@@ -346,10 +370,8 @@ def main():
         per_device_eval_batch_size=args.batch,
         learning_rate=args.lr,
         weight_decay=args.weight_decay,
-        eval_strategy="steps",
-        eval_steps=args.eval_steps,
-        save_strategy="steps",
-        save_steps=args.save_steps,
+        evaluation_strategy="epoch",
+        save_strategy="epoch",
         save_total_limit=3,
         load_best_model_at_end=True,
         metric_for_best_model="loss",
@@ -378,7 +400,8 @@ def main():
 
     try:
         # Train
-        trainer.train()
+        # Auto-resume if a checkpoint exists in output_dir
+        trainer.train(resume_from_checkpoint=True)
 
         print("\n" + "=" * 80)
         print("✅ Training completed successfully!")

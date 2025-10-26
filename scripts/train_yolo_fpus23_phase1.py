@@ -210,9 +210,10 @@ def create_training_config(args, anchors=None):
     if args.cls_pw:
         config['cls'] = args.cls_pw
 
-    # Add custom anchors if provided
-    if anchors is not None:
-        config['anchors'] = anchors
+    # NOTE: Ultralytics YOLOv8/YOLO11 detectors are anchor-free. Passing an
+    # 'anchors' override will raise an error. We therefore do NOT forward
+    # custom anchors to Ultralytics. If anchors were provided, we only log
+    # them and proceed with other optimizations (balancing, augs, etc.).
 
     return config
 
@@ -299,11 +300,26 @@ def main():
     if args.custom_anchors:
         anchors = load_custom_anchors(args.custom_anchors)
 
-    # Create training config
-    config = create_training_config(args, anchors)
+    # Create training config (anchors are NOT forwarded for YOLO11 anchor-free models)
+    config = create_training_config(args, anchors=None)
 
     # Print summary
     print_phase1_summary(args, config)
+
+    # If anchors were supplied, warn that YOLO11 is anchor-free and we skip them
+    if args.custom_anchors:
+        print("\n⚠️  Note: YOLO11 is anchor-free; custom anchors are logged but not applied.")
+
+    # Auto-resume: if --resume not provided but last.pt exists under project/name, resume from it
+    try:
+        from pathlib import Path as _P
+        if not args.resume and args.project and args.name:
+            last_ckpt = _P(args.project) / args.name / 'weights' / 'last.pt'
+            if last_ckpt.exists():
+                args.resume = str(last_ckpt)
+                print(f"\n🔁 Auto-resume: found {last_ckpt}, resuming from last checkpoint.")
+    except Exception:
+        pass
 
     # Load YOLO model
     print(f"\n🔧 Loading YOLO model: {args.model}")
