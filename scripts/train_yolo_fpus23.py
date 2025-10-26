@@ -136,9 +136,11 @@ def main():
     ap.add_argument('--despeckle-kernel', type=int, default=5, choices=[3, 5, 7],
                     help='Median blur kernel size (3=mild, 5=moderate, 7=strong)')
 
-    # Class imbalance handling
+    # Class imbalance handling (Ultralytics expects `cls`, not `cls_pw`)
     ap.add_argument('--cls-pw', type=float, default=3.0,
-                    help='Class weight power for focal loss (3.0-5.0 recommended for medical imaging)')
+                    help='Deprecated name; mapped to Ultralytics arg `cls`. Use lower values (0.5-3.0).')
+    ap.add_argument('--cls', type=float, default=None,
+                    help='Ultralytics classification loss weight (overrides --cls-pw if set)')
 
     # Output configuration
     ap.add_argument('--project', type=str, default='runs/detect',
@@ -226,6 +228,9 @@ def main():
     # Load model
     model = YOLO(args.model)
 
+    # Effective classification loss weight: prefer --cls if provided, else map --cls-pw
+    eff_cls = args.cls if args.cls is not None else args.cls_pw
+
     # Configure training hyperparameters (ultrasound-optimized)
     train_cfg = {
         # Core settings
@@ -244,9 +249,8 @@ def main():
 
         # Loss function weights
         'box': 7.5,       # Box loss weight
-        'cls': 0.5,       # Classification loss weight
+        'cls': eff_cls,   # Classification loss weight (Ultralytics key)
         'dfl': 1.5,       # Distribution focal loss weight
-        'cls_pw': args.cls_pw,  # 🔥 Class power weight (focal loss effect)
 
         # Data loading
         'workers': args.workers,
