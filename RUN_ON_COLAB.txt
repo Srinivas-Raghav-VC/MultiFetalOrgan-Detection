@@ -14,6 +14,11 @@
 📋 COPY FROM HERE ↓
 ═══════════════════════════════════════════════════════════════════════════════
 
+# Step 1: Mount Google Drive FIRST
+from google.colab import drive
+drive.mount('/content/drive')
+
+# Step 2: Clone repo and run training
 !git clone https://github.com/Srinivas-Raghav-VC/MultiFetalOrgan-Detection.git /content/fpus23
 %cd /content/fpus23
 !python colab_train_with_drive.py

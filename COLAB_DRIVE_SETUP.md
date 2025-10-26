@@ -33,13 +33,17 @@ Go to: https://colab.research.google.com
 # 🚀 FPUS23 YOLO TRAINING WITH GOOGLE DRIVE AUTO-BACKUP
 # ═══════════════════════════════════════════════════════════════════════
 
-# Clone repository
+# STEP 1: Mount Google Drive FIRST (IMPORTANT!)
+from google.colab import drive
+drive.mount('/content/drive')
+
+# STEP 2: Clone repository
 !git clone https://github.com/Srinivas-Raghav-VC/MultiFetalOrgan-Detection.git /content/fpus23
 
-# Change directory
+# STEP 3: Change directory
 %cd /content/fpus23
 
-# Run training with Drive backup
+# STEP 4: Run training with Drive backup
 !python colab_train_with_drive.py
 ```
 

@@ -35,10 +35,35 @@ def mount_google_drive():
     print("📂 MOUNTING GOOGLE DRIVE")
     print("="*80)
 
+    # Check if already mounted
+    drive_path = Path('/content/drive/MyDrive')
+    if drive_path.exists():
+        print("✅ Google Drive already mounted at: /content/drive")
+        drive_project = Path('/content/drive/MyDrive/FPUS23_YOLO_Training')
+        drive_project.mkdir(parents=True, exist_ok=True)
+        print(f"✅ Project directory created: {drive_project}")
+        return drive_project
+
     try:
-        from google.colab import drive
-        drive.mount('/content/drive', force_remount=False)
-        print("✅ Google Drive mounted at: /content/drive")
+        # Check if we're in Colab
+        import sys
+        if 'google.colab' not in sys.modules:
+            # Try to import it
+            from google.colab import drive
+        else:
+            # Already imported
+            import google.colab.drive as drive
+
+        print("🔑 Requesting Google Drive authorization...")
+        print("   Please click the link below and authorize access")
+        print("   Then paste the authorization code when prompted")
+        print()
+
+        # Mount with user interaction
+        from google.colab import drive as colab_drive
+        colab_drive.mount('/content/drive', force_remount=False)
+
+        print("\n✅ Google Drive mounted at: /content/drive")
 
         # Create project directory in Drive
         drive_project = Path('/content/drive/MyDrive/FPUS23_YOLO_Training')
@@ -46,9 +71,22 @@ def mount_google_drive():
         print(f"✅ Project directory created: {drive_project}")
 
         return drive_project
+
+    except ImportError:
+        print("❌ Not running in Google Colab environment")
+        print("⚠️  This script must be run in Google Colab")
+        print("\n💡 To run in Colab:")
+        print("   1. Go to https://colab.research.google.com")
+        print("   2. Create a new notebook")
+        print("   3. Run this script there")
+        return None
+
     except Exception as e:
         print(f"❌ Failed to mount Google Drive: {e}")
-        print("⚠️  Training will continue but checkpoints won't be backed up to Drive")
+        print("\n💡 Manual fix - Run this in a separate cell first:")
+        print("   from google.colab import drive")
+        print("   drive.mount('/content/drive')")
+        print("\n   Then re-run this script")
         return None
 
 
