@@ -274,6 +274,14 @@ def train_yolo(data_yaml, drive_dirs, custom_anchors=None, balanced=False):
         print(f"❌ Training script not found: {train_script}")
         return False
 
+    # Set project directory to save directly in Google Drive if available
+    if drive_dirs:
+        project_dir = str(drive_dirs['results'].parent)
+        print(f"💾 Training will save directly to Google Drive: {project_dir}")
+    else:
+        project_dir = "runs/detect"
+        print(f"⚠️  Training will save to local storage: {project_dir}")
+
     # Build command
     cmd = [
         sys.executable,
@@ -283,7 +291,8 @@ def train_yolo(data_yaml, drive_dirs, custom_anchors=None, balanced=False):
         "--epochs", "100",
         "--batch", "16",
         "--imgsz", "768",
-        "--name", "fpus23_colab_drive"
+        "--name", "fpus23_colab_drive",
+        "--project", project_dir  # Save directly to Drive
     ]
 
     if custom_anchors and Path(custom_anchors).exists():
@@ -297,21 +306,28 @@ def train_yolo(data_yaml, drive_dirs, custom_anchors=None, balanced=False):
     print(f"\n📋 Training command:")
     print(f"   {' '.join(cmd)}\n")
 
-    # Start training
+    # Start training (runs in foreground, saves to Drive automatically)
     try:
-        # Run training (will take 8-12 hours)
+        print("="*80)
+        print("🔥 TRAINING IN PROGRESS")
+        print("="*80)
+        print("✅ Checkpoints saving to Google Drive automatically")
+        print("✅ Check Google Drive for real-time updates")
+        print("="*80)
+
         subprocess.run(cmd, check=True)
 
         print("\n" + "="*80)
         print("✅ TRAINING COMPLETE!")
         print("="*80)
 
-        # Backup final results to Drive
-        results_dir = Path('/content/fpus23_project/runs/detect/fpus23_colab_drive')
-        if results_dir.exists() and drive_dirs:
-            print("\n💾 Backing up final results to Google Drive...")
-            backup_to_drive(results_dir, drive_dirs['results'])
-            print("✅ Results backed up to Google Drive!")
+        if drive_dirs:
+            results_path = drive_dirs['results'] / 'fpus23_colab_drive'
+            print(f"\n📁 All results saved in Google Drive:")
+            print(f"   {results_path}")
+            print(f"\n✅ Checkpoints: {results_path}/weights/")
+            print(f"✅ Plots: {results_path}/*.png")
+            print(f"✅ Logs: {results_path}/results.csv")
 
         return True
 
