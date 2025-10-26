@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Srinivas's G14/Downloads/SAE_2/New folder/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
