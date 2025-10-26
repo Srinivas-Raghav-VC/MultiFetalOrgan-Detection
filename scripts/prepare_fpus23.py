@@ -438,14 +438,16 @@ def main():
                 if w is None or h is None:
                     # Cannot compute normalized boxes without dimensions
                     continue
+                # Create a collision-resistant base name by prefixing the immediate parent directory
+                # This avoids overwriting when multiple streams use identical frame names (e.g., frame_000123)
+                base = f"{img.parent.name}__{img.stem}"
                 if not args.dry_run:
                     try:
-                        # Normalize extension to lower-case for training toolchains that glob lowercase only
-                        dest_name = img.stem + img.suffix.lower()
+                        dest_name = base + img.suffix.lower()  # lower-case extension for consistency
                         shutil.copy(img, YOLO_ROOT / 'images' / split_name / dest_name)
                     except Exception:
                         pass
-                out_lab = YOLO_ROOT / 'labels' / split_name / (img.stem + '.txt')
+                out_lab = YOLO_ROOT / 'labels' / split_name / (base + '.txt')
                 if convert_xml_to_yolo(xml, out_lab, w, h, drop):
                     ok += 1; drop['written'] += 1
             return ok
@@ -523,9 +525,12 @@ def main():
                 if w is None or h is None:
                     # Cannot produce normalized labels without dimensions; skip
                     continue
+                # Use stream-aware unique name to prevent collisions across streams
+                # Prepend the stream directory name (images_dir.name)
+                stream_name = img_path.parent.name
+                base = f"{stream_name}__{img_path.stem}"
                 if not args.dry_run:
-                    # Normalize extension to lower-case for consistent globbing
-                    dest_img = YOLO_ROOT / 'images' / split_name / (img_path.stem + img_path.suffix.lower())
+                    dest_img = YOLO_ROOT / 'images' / split_name / (base + img_path.suffix.lower())
                     if not dest_img.exists():
                         try:
                             shutil.copy(img_path, dest_img)
@@ -549,7 +554,7 @@ def main():
                     yolo_lines.append(f"{cid} {xcen:.6f} {ycen:.6f} {bw:.6f} {bh:.6f}")
                 if yolo_lines:
                     if not args.dry_run:
-                        out_lab = YOLO_ROOT / 'labels' / split_name / (img_path.stem + '.txt')
+                        out_lab = YOLO_ROOT / 'labels' / split_name / (base + '.txt')
                         out_lab.write_text('\n'.join(yolo_lines))
                     drop['written'] += 1; ok += 1
             print(f"YOLO conversion ({split_name}): {ok}/{len(lst)} annotations")
