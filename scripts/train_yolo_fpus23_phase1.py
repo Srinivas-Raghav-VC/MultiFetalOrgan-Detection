@@ -105,11 +105,19 @@ def parse_args():
 
     # Advanced options
     parser.add_argument('--resume', type=str, default=None,
-                       help='Resume from checkpoint')
+                       help='Resume from checkpoint (path to last.pt). If omitted, will auto-detect last.pt in project/name')
     parser.add_argument('--pretrained', action='store_true',
                        help='Use pretrained weights')
     parser.add_argument('--no-amp', action='store_true',
                        help='Disable automatic mixed precision')
+    parser.add_argument('--patience', type=int, default=50,
+                       help='Early stopping patience (epochs)')
+    parser.add_argument('--save-period', type=int, default=1,
+                       help='Save a checkpoint every N epochs (default: 1)')
+    parser.add_argument('--deterministic', action='store_true',
+                       help='Enable deterministic dataloading/ops')
+    parser.add_argument('--workers', type=int, default=2,
+                       help='Number of dataloader workers (default: 2)')
 
     return parser.parse_args()
 
@@ -156,7 +164,7 @@ def create_training_config(args, anchors=None):
         'imgsz': args.imgsz,
         'device': args.device,
         'name': args.name,
-        'project': 'runs/detect',
+        'project': args.project,
 
         # Optimizer
         'optimizer': 'AdamW',
@@ -184,36 +192,29 @@ def create_training_config(args, anchors=None):
         'translate': 0.1, # Translation (±10%)
         'scale': 0.5,     # Scale (±50%)
         'shear': 0.0,     # Shear (disabled for medical)
-        'perspective': 0.0, # Perspective (disabled for medical)
-        'flipud': 0.0,    # Vertical flip (disabled - anatomical consistency)
-        'fliplr': 0.5,    # Horizontal flip (50% - left/right symmetry ok)
-        'mosaic': 0.0,    # Mosaic disabled (medical images)
-        'mixup': 0.0,     # Mixup disabled (medical images)
+        'fliplr': 0.5,
+        'flipud': 0.0,
+        'mosaic': 0.0,
+        'copy_paste': 0.0,
+        'erasing': 0.4,
+        'auto_augment': 'randaugment',
 
         # Validation
         'val': True,
+
+        # Checkpointing & early stop
         'save': True,
-        'save_period': -1,  # Save every epoch (-1 = only best)
-        'patience': 50,     # Early stopping patience
+        'save_period': getattr(args, 'save_period', 1),
+        'patience': getattr(args, 'patience', 50),
 
         # Performance
-        'workers': 2,
-        'amp': not args.no_amp,  # Automatic Mixed Precision
-        'cache': False,  # Don't cache images (may OOM on large datasets)
-
-        # Logging
-        'verbose': True,
-        'plots': True,
+        'deterministic': getattr(args, 'deterministic', False),
+        'workers': getattr(args, 'workers', 2),
     }
 
-    # Override cls loss weight if specified
-    if args.cls_pw:
-        config['cls'] = args.cls_pw
-
-    # NOTE: Ultralytics YOLOv8/YOLO11 detectors are anchor-free. Passing an
-    # 'anchors' override will raise an error. We therefore do NOT forward
-    # custom anchors to Ultralytics. If anchors were provided, we only log
-    # them and proceed with other optimizations (balancing, augs, etc.).
+    # Anchors are intentionally ignored for YOLO11 (anchor-free); keep in config only for legacy models.
+    if anchors is not None and not str(args.model).lower().startswith('yolo11'):
+        config['anchors'] = anchors
 
     return config
 
@@ -258,10 +259,16 @@ def print_phase1_summary(args, config):
 
     optimizations = []
 
-    if args.custom_anchors:
-        optimizations.append("✅ Custom anchors (K-means clustering)")
+    model_lc = str(args.model).lower() if args.model else ''
+    anchor_free = 'yolo11' in model_lc
+
+    if not anchor_free:
+        if args.custom_anchors:
+            optimizations.append("✅ Custom anchors (K-means clustering)")
+        else:
+            optimizations.append("⚠️  Using default anchors (consider running calculate_fpus23_anchors.py)")
     else:
-        optimizations.append("⚠️  Using default COCO anchors (consider running calculate_fpus23_anchors.py)")
+        optimizations.append("✅ Anchor-free model (YOLO11) — anchors not applicable")
 
     if args.balanced_data:
         optimizations.append("✅ Balanced dataset (weighted duplication)")
@@ -276,6 +283,7 @@ def print_phase1_summary(args, config):
     optimizations.append("✅ Medical imaging augmentation profile")
     optimizations.append("✅ Cosine learning rate schedule")
     optimizations.append(f"✅ Classification loss weight: {config['cls']}")
+    optimizations.append(f"✅ Checkpoints every {config.get('save_period', 1)} epoch(s); patience={config.get('patience', 50)}")
 
     for opt in optimizations:
         print(f"  {opt}")
@@ -364,20 +372,21 @@ def main():
             if 'metrics/mAP50-95(B)' in metrics:
                 print(f"  mAP@50-95: {metrics['metrics/mAP50-95(B)']:.4f}")
 
-        print(f"\nModel saved: runs/detect/{args.name}/weights/best.pt")
+        print(f"\nModel saved: {args.project}/{args.name}/weights/best.pt")
 
         print("\n📊 Expected Phase 1 improvements:")
-        print("   - Custom anchors:        +3-5% AP (Arms/Legs)")
-        print("   - Balanced dataset:      +2-3% AP (underrepresented classes)")
-        print("   - Optimized augmentation: +1-2% AP (overall)")
-        print("   - Total expected:        +6-10% mAP")
+        if str(args.model).lower().startswith('yolo11'):
+            print("   - Anchor-free model:          stability on small objects")
+        else:
+            print("   - Custom anchors:             +3-5% AP (Arms/Legs) if using anchor models")
+        print("   - Balanced dataset:           +2-3% AP (underrepresented classes)")
+        print("   - Optimized augmentation:     +1-2% AP (overall)")
 
         print("\n🎯 Next steps:")
         print("   1. Validate on test set:")
-        print(f"      model = YOLO('runs/detect/{args.name}/weights/best.pt')")
+        print(f"      model = YOLO('{args.project}/{args.name}/weights/best.pt')")
         print(f"      model.val(data='{args.data}')")
         print("   2. Analyze per-class AP (check if Arms/Legs improved)")
-        print("   3. If mAP < 98%, proceed to Phase 2 (architecture modifications)")
 
     except Exception as e:
         print(f"\n❌ Training failed: {e}")

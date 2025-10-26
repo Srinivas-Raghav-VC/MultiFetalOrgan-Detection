@@ -95,15 +95,33 @@ def main():
 
     data_yaml = Path(args.data)
     meta = parse_simple_yaml(data_yaml)
-    if not meta.get('path'):
-        print('Could not parse path: from data.yaml. Aborting.', file=sys.stderr)
-        sys.exit(2)
 
-    root = Path(meta['path'])
-    split_rel = {'train': meta['train'], 'val': meta['val'], 'test': meta['test']}[args.split]
-    if not split_rel:
-        print(f'Missing split path for {args.split} in data.yaml', file=sys.stderr)
-        sys.exit(2)
+    # Accept YAMLs that either (a) provide a root 'path' plus relative splits, or
+    # (b) omit 'path' and provide absolute train/val/test split paths.
+    root = None
+    split_rel = None
+
+    # Preferred: Ultralytics-style with 'path' and relative split dirs
+    if meta.get('path'):
+        root = Path(meta['path'])
+        split_rel = {'train': meta.get('train'), 'val': meta.get('val'), 'test': meta.get('test')}[args.split]
+        if not split_rel:
+            print(f'Missing split path for {args.split} in data.yaml', file=sys.stderr)
+            sys.exit(2)
+    else:
+        # Fallback: absolute split paths directly in YAML
+        split_abs = {'train': meta.get('train'), 'val': meta.get('val'), 'test': meta.get('test')}[args.split]
+        if not split_abs:
+            print(f'Could not determine split path for {args.split}. Aborting.', file=sys.stderr)
+            sys.exit(2)
+        # If provided as absolute, treat root as filesystem root and split as absolute string
+        if os.path.isabs(split_abs):
+            root = Path('/')
+            split_rel = split_abs  # keep absolute; loader will handle it as root/'absolute'
+        else:
+            # If it's relative but no root provided, assume data.yaml directory as root
+            root = data_yaml.parent
+            split_rel = split_abs
 
     print(f"YOLO root: {root}")
     print(f"Split rel : {split_rel}")
