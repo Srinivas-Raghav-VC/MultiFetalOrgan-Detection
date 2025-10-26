@@ -72,17 +72,32 @@ def collect_pairs(root: Path) -> List[Tuple[Path, Path]]:
 
 
 def find_cvat_aggregated_xmls(root: Path) -> List[Path]:
-    """Return CVAT aggregated XMLs like .../annos/annotation/<stream>/annotations.xml"""
-    xs = list((root / 'annos' / 'annotation').rglob('annotations.xml'))
+    """Return CVAT aggregated XMLs from both annos/ and boxes/ directories"""
+    xs = []
+    # Check annos/annotation/<stream>/annotations.xml
+    if (root / 'annos' / 'annotation').exists():
+        xs.extend(list((root / 'annos' / 'annotation').rglob('annotations.xml')))
+    # Check boxes/annotation/<stream>/annotations.xml
+    if (root / 'boxes' / 'annotation').exists():
+        xs.extend(list((root / 'boxes' / 'annotation').rglob('annotations.xml')))
     return xs
 
 
 def map_images_dir_for_xml(xml_path: Path) -> Optional[Path]:
-    """Given .../annos/annotation/<stream>/annotations.xml, map to images dir .../four_poses/<stream>/"""
+    """Given .../annos/annotation/<stream>/annotations.xml OR .../boxes/annotation/<stream>/annotations.xml,
+    map to images dir .../four_poses/<stream>/"""
     parts = list(xml_path.parts)
     try:
-        i = parts.index('annos')
-        if parts[i+1] == 'annotation':
+        # Try to find 'annos' or 'boxes' in path
+        annotation_dir = None
+        if 'annos' in parts:
+            i = parts.index('annos')
+            annotation_dir = 'annos'
+        elif 'boxes' in parts:
+            i = parts.index('boxes')
+            annotation_dir = 'boxes'
+
+        if annotation_dir and parts[i+1] == 'annotation':
             stream = parts[i+2]
             base = Path(*parts[:i])
             candidate = base / 'four_poses' / stream
