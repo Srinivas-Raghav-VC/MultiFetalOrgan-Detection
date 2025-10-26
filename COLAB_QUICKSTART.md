@@ -14,10 +14,10 @@ Go to [https://colab.research.google.com](https://colab.research.google.com)
 
 ```python
 # Run this in a Colab cell
-!git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git /content/fpus23_repo
+!git clone https://github.com/Srinivas-Raghav-VC/MultiFetalOrgan-Detection.git /content/fpus23_repo
 %cd /content/fpus23_repo
 !python colab_setup.py \
-    --github-repo https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git \
+    --github-repo https://github.com/Srinivas-Raghav-VC/MultiFetalOrgan-Detection.git \
     --drive-file-id 1LL-r2hNiP6C190UBSE4v1FFCF3OQT9N3
 ```
 
@@ -39,7 +39,7 @@ Training time: **~8-12 hours** (will run even if you close browser)
 ### Cell 1: Setup Environment
 ```python
 # Clone your GitHub repo
-!git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git /content/fpus23
+!git clone https://github.com/Srinivas-Raghav-VC/MultiFetalOrgan-Detection.git /content/fpus23
 %cd /content/fpus23
 
 # Install dependencies
