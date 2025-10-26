@@ -25,7 +25,8 @@ Go to: **https://colab.research.google.com**
 from google.colab import drive
 drive.mount('/content/drive')
 
-# STEP 2: Clone repository
+# STEP 2: Clone repository (remove old if exists)
+!rm -rf /content/fpus23
 !git clone https://github.com/Srinivas-Raghav-VC/MultiFetalOrgan-Detection.git /content/fpus23
 
 # STEP 3: Run training
