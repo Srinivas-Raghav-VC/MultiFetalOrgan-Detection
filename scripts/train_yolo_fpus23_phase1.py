@@ -84,6 +84,8 @@ def parse_args():
                        help='Device (0, 1, 2, ... or cpu)')
     parser.add_argument('--name', type=str, default='fpus23_phase1',
                        help='Experiment name')
+    parser.add_argument('--project', type=str, default='runs/detect',
+                       help='Project directory to save results (default: runs/detect)')
 
     # Phase 1 optimizations
     parser.add_argument('--balanced-data', type=str, default=None,
