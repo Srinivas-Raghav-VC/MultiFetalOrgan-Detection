@@ -54,14 +54,20 @@ def parse_simple_yaml(fp: Path) -> dict:
     }
 
 
-def load_yolo_split(root: Path, split_rel: str) -> tuple[list[Path], list[Path]]:
-    images = sorted((root / split_rel).glob('*.png')) + \
-             sorted((root / split_rel).glob('*.jpg')) + \
-             sorted((root / split_rel).glob('*.jpeg'))
+def load_yolo_split(root: Path, split_rel: str) -> tuple[list[Path], list[Path], list[Path]]:
+    img_dir = root / split_rel
+    # Case-insensitive globbing by enumerating common variants
+    patterns = ['*.png', '*.PNG', '*.jpg', '*.JPG', '*.jpeg', '*.JPEG']
+    images: list[Path] = []
+    for pat in patterns:
+        images += sorted(img_dir.glob(pat))
     # Convert e.g. images/train -> labels/train
     labels_rel = split_rel.replace('images/', 'labels/')
-    labels = [root / labels_rel / (p.stem + '.txt') for p in images]
-    return images, labels
+    lab_dir = root / labels_rel
+    label_files = sorted(lab_dir.glob('*.txt'))
+    # Map labels for images (missing image labels will be ignored in this mapping)
+    img_to_lab = [root / labels_rel / (p.stem + '.txt') for p in images]
+    return images, img_to_lab, label_files
 
 
 def overlay_bbox(img: Image.Image, lines: list[str]) -> Image.Image:
@@ -99,12 +105,16 @@ def main():
         print(f'Missing split path for {args.split} in data.yaml', file=sys.stderr)
         sys.exit(2)
 
-    images, labels = load_yolo_split(root, split_rel)
-    missing_labels = [p for p, l in zip(images, labels) if not l.exists()]
+    images, mapped_labels, all_labels = load_yolo_split(root, split_rel)
+    missing_labels = [p for p, l in zip(images, mapped_labels) if not l.exists()]
+    # Also detect labels that don't have a corresponding image
+    image_stems = {p.stem for p in images}
+    orphan_labels = [l for l in all_labels if l.stem not in image_stems]
     print(f"Split: {args.split}")
     print(f" - Images: {len(images)}")
-    print(f" - Labels: {len(labels)}")
+    print(f" - Labels: {len(all_labels)}")
     print(f" - Missing label files: {len(missing_labels)}")
+    print(f" - Orphan labels (no image): {len(orphan_labels)}")
 
     if args.vis_out and Image is not None:
         out_dir = Path(args.vis_out)
@@ -127,4 +137,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

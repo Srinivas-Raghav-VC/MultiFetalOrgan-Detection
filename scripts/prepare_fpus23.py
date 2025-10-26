@@ -440,7 +440,9 @@ def main():
                     continue
                 if not args.dry_run:
                     try:
-                        shutil.copy(img, YOLO_ROOT / 'images' / split_name / img.name)
+                        # Normalize extension to lower-case for training toolchains that glob lowercase only
+                        dest_name = img.stem + img.suffix.lower()
+                        shutil.copy(img, YOLO_ROOT / 'images' / split_name / dest_name)
                     except Exception:
                         pass
                 out_lab = YOLO_ROOT / 'labels' / split_name / (img.stem + '.txt')
@@ -522,7 +524,8 @@ def main():
                     # Cannot produce normalized labels without dimensions; skip
                     continue
                 if not args.dry_run:
-                    dest_img = YOLO_ROOT / 'images' / split_name / img_path.name
+                    # Normalize extension to lower-case for consistent globbing
+                    dest_img = YOLO_ROOT / 'images' / split_name / (img_path.stem + img_path.suffix.lower())
                     if not dest_img.exists():
                         try:
                             shutil.copy(img_path, dest_img)
