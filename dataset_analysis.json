@@ -1,0 +1,559 @@
+{
+  "total_xml_references": 30226,
+  "streams": {
+    "stream_hdvb_aroundabd_h": {
+      "total": 361,
+      "with_boxes": 0,
+      "without_boxes": 361,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvb_aroundabd_h\\annotations.xml"
+    },
+    "stream_hdvb_aroundabd_v": {
+      "total": 273,
+      "with_boxes": 0,
+      "without_boxes": 273,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvb_aroundabd_v\\annotations.xml"
+    },
+    "stream_hdvb_aroundarms_h": {
+      "total": 312,
+      "with_boxes": 0,
+      "without_boxes": 312,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvb_aroundarms_h\\annotations.xml"
+    },
+    "stream_hdvb_aroundarms_v": {
+      "total": 232,
+      "with_boxes": 0,
+      "without_boxes": 232,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvb_aroundarms_v\\annotations.xml"
+    },
+    "stream_hdvb_aroundhead_h": {
+      "total": 284,
+      "with_boxes": 0,
+      "without_boxes": 284,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvb_aroundhead_h\\annotations.xml"
+    },
+    "stream_hdvb_aroundhead_v": {
+      "total": 360,
+      "with_boxes": 0,
+      "without_boxes": 360,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvb_aroundhead_v\\annotations.xml"
+    },
+    "stream_hdvb_aroundlegs_h": {
+      "total": 269,
+      "with_boxes": 0,
+      "without_boxes": 269,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvb_aroundlegs_h\\annotations.xml"
+    },
+    "stream_hdvb_aroundlegs_v": {
+      "total": 216,
+      "with_boxes": 0,
+      "without_boxes": 216,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvb_aroundlegs_v\\annotations.xml"
+    },
+    "stream_hdvb_longrec_h": {
+      "total": 378,
+      "with_boxes": 0,
+      "without_boxes": 378,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvb_longrec_h\\annotations.xml"
+    },
+    "stream_hdvb_longrec_v": {
+      "total": 761,
+      "with_boxes": 0,
+      "without_boxes": 761,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvb_longrec_v\\annotations.xml"
+    },
+    "stream_hdvf_aroundabd_h": {
+      "total": 359,
+      "with_boxes": 0,
+      "without_boxes": 359,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvf_aroundabd_h\\annotations.xml"
+    },
+    "stream_hdvf_aroundabd_v": {
+      "total": 237,
+      "with_boxes": 0,
+      "without_boxes": 237,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvf_aroundabd_v\\annotations.xml"
+    },
+    "stream_hdvf_aroundarms_h": {
+      "total": 173,
+      "with_boxes": 0,
+      "without_boxes": 173,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvf_aroundarms_h\\annotations.xml"
+    },
+    "stream_hdvf_aroundarms_v": {
+      "total": 206,
+      "with_boxes": 0,
+      "without_boxes": 206,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvf_aroundarms_v\\annotations.xml"
+    },
+    "stream_hdvf_aroundhead_h": {
+      "total": 349,
+      "with_boxes": 0,
+      "without_boxes": 349,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvf_aroundhead_h\\annotations.xml"
+    },
+    "stream_hdvf_aroundhead_v": {
+      "total": 371,
+      "with_boxes": 0,
+      "without_boxes": 371,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvf_aroundhead_v\\annotations.xml"
+    },
+    "stream_hdvf_aroundlegs_h": {
+      "total": 285,
+      "with_boxes": 0,
+      "without_boxes": 285,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvf_aroundlegs_h\\annotations.xml"
+    },
+    "stream_hdvf_aroundlegs_v": {
+      "total": 360,
+      "with_boxes": 0,
+      "without_boxes": 360,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvf_aroundlegs_v\\annotations.xml"
+    },
+    "stream_hdvf_longrec_h": {
+      "total": 556,
+      "with_boxes": 0,
+      "without_boxes": 556,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvf_longrec_h\\annotations.xml"
+    },
+    "stream_hdvf_longrec_v": {
+      "total": 339,
+      "with_boxes": 0,
+      "without_boxes": 339,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_hdvf_longrec_v\\annotations.xml"
+    },
+    "stream_huvb_aroundarms_h": {
+      "total": 224,
+      "with_boxes": 0,
+      "without_boxes": 224,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvb_aroundarms_h\\annotations.xml"
+    },
+    "stream_huvb_aroundarms_v": {
+      "total": 210,
+      "with_boxes": 0,
+      "without_boxes": 210,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvb_aroundarms_v\\annotations.xml"
+    },
+    "stream_huvb_aroundhead_h": {
+      "total": 537,
+      "with_boxes": 0,
+      "without_boxes": 537,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvb_aroundhead_h\\annotations.xml"
+    },
+    "stream_huvb_aroundhead_v": {
+      "total": 305,
+      "with_boxes": 0,
+      "without_boxes": 305,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvb_aroundhead_v\\annotations.xml"
+    },
+    "stream_huvb_aroundlegs_h": {
+      "total": 364,
+      "with_boxes": 0,
+      "without_boxes": 364,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvb_aroundlegs_h\\annotations.xml"
+    },
+    "stream_huvb_aroundlegs_v": {
+      "total": 248,
+      "with_boxes": 0,
+      "without_boxes": 248,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvb_aroundlegs_v\\annotations.xml"
+    },
+    "stream_huvb_aroundsbd_h": {
+      "total": 299,
+      "with_boxes": 0,
+      "without_boxes": 299,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvb_aroundsbd_h\\annotations.xml"
+    },
+    "stream_huvb_longrec_h": {
+      "total": 597,
+      "with_boxes": 0,
+      "without_boxes": 597,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvb_longrec_h\\annotations.xml"
+    },
+    "stream_huvb_longrec_v": {
+      "total": 892,
+      "with_boxes": 0,
+      "without_boxes": 892,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvb_longrec_v\\annotations.xml"
+    },
+    "stream_huvf_aroundabd_h": {
+      "total": 394,
+      "with_boxes": 0,
+      "without_boxes": 394,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvf_aroundabd_h\\annotations.xml"
+    },
+    "stream_huvf_aroundabd_v": {
+      "total": 319,
+      "with_boxes": 0,
+      "without_boxes": 319,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvf_aroundabd_v\\annotations.xml"
+    },
+    "stream_huvf_aroundarms_h": {
+      "total": 197,
+      "with_boxes": 0,
+      "without_boxes": 197,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvf_aroundarms_h\\annotations.xml"
+    },
+    "stream_huvf_aroundarms_v": {
+      "total": 308,
+      "with_boxes": 0,
+      "without_boxes": 308,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvf_aroundarms_v\\annotations.xml"
+    },
+    "stream_huvf_aroundhead_h": {
+      "total": 497,
+      "with_boxes": 0,
+      "without_boxes": 497,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvf_aroundhead_h\\annotations.xml"
+    },
+    "stream_huvf_aroundhead_v": {
+      "total": 300,
+      "with_boxes": 0,
+      "without_boxes": 300,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvf_aroundhead_v\\annotations.xml"
+    },
+    "stream_huvf_aroundlegs_h": {
+      "total": 400,
+      "with_boxes": 0,
+      "without_boxes": 400,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvf_aroundlegs_h\\annotations.xml"
+    },
+    "stream_huvf_aroundlegs_v": {
+      "total": 301,
+      "with_boxes": 0,
+      "without_boxes": 301,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvf_aroundlegs_v\\annotations.xml"
+    },
+    "stream_huvf_longrec_h": {
+      "total": 1083,
+      "with_boxes": 0,
+      "without_boxes": 1083,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvf_longrec_h\\annotations.xml"
+    },
+    "stream_huvf_longrec_v": {
+      "total": 957,
+      "with_boxes": 0,
+      "without_boxes": 957,
+      "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\annos\\annotation\\stream_huvf_longrec_v\\annotations.xml"
+    }
+  },
+  "image_check": {
+    "stream_hdvb_aroundabd_h": {
+      "expected": 361,
+      "found": 361,
+      "missing": 0,
+      "exists": true,
+      "png_count": 361,
+      "missing_examples": []
+    },
+    "stream_hdvb_aroundabd_v": {
+      "expected": 273,
+      "found": 273,
+      "missing": 0,
+      "exists": true,
+      "png_count": 273,
+      "missing_examples": []
+    },
+    "stream_hdvb_aroundarms_h": {
+      "expected": 312,
+      "found": 312,
+      "missing": 0,
+      "exists": true,
+      "png_count": 312,
+      "missing_examples": []
+    },
+    "stream_hdvb_aroundarms_v": {
+      "expected": 232,
+      "found": 232,
+      "missing": 0,
+      "exists": true,
+      "png_count": 232,
+      "missing_examples": []
+    },
+    "stream_hdvb_aroundhead_h": {
+      "expected": 284,
+      "found": 284,
+      "missing": 0,
+      "exists": true,
+      "png_count": 284,
+      "missing_examples": []
+    },
+    "stream_hdvb_aroundhead_v": {
+      "expected": 360,
+      "found": 360,
+      "missing": 0,
+      "exists": true,
+      "png_count": 360,
+      "missing_examples": []
+    },
+    "stream_hdvb_aroundlegs_h": {
+      "expected": 269,
+      "found": 269,
+      "missing": 0,
+      "exists": true,
+      "png_count": 269,
+      "missing_examples": []
+    },
+    "stream_hdvb_aroundlegs_v": {
+      "expected": 216,
+      "found": 216,
+      "missing": 0,
+      "exists": true,
+      "png_count": 216,
+      "missing_examples": []
+    },
+    "stream_hdvb_longrec_h": {
+      "expected": 378,
+      "found": 378,
+      "missing": 0,
+      "exists": true,
+      "png_count": 378,
+      "missing_examples": []
+    },
+    "stream_hdvb_longrec_v": {
+      "expected": 761,
+      "found": 761,
+      "missing": 0,
+      "exists": true,
+      "png_count": 761,
+      "missing_examples": []
+    },
+    "stream_hdvf_aroundabd_h": {
+      "expected": 359,
+      "found": 359,
+      "missing": 0,
+      "exists": true,
+      "png_count": 359,
+      "missing_examples": []
+    },
+    "stream_hdvf_aroundabd_v": {
+      "expected": 237,
+      "found": 237,
+      "missing": 0,
+      "exists": true,
+      "png_count": 237,
+      "missing_examples": []
+    },
+    "stream_hdvf_aroundarms_h": {
+      "expected": 173,
+      "found": 173,
+      "missing": 0,
+      "exists": true,
+      "png_count": 173,
+      "missing_examples": []
+    },
+    "stream_hdvf_aroundarms_v": {
+      "expected": 206,
+      "found": 206,
+      "missing": 0,
+      "exists": true,
+      "png_count": 206,
+      "missing_examples": []
+    },
+    "stream_hdvf_aroundhead_h": {
+      "expected": 349,
+      "found": 349,
+      "missing": 0,
+      "exists": true,
+      "png_count": 349,
+      "missing_examples": []
+    },
+    "stream_hdvf_aroundhead_v": {
+      "expected": 371,
+      "found": 371,
+      "missing": 0,
+      "exists": true,
+      "png_count": 371,
+      "missing_examples": []
+    },
+    "stream_hdvf_aroundlegs_h": {
+      "expected": 285,
+      "found": 285,
+      "missing": 0,
+      "exists": true,
+      "png_count": 285,
+      "missing_examples": []
+    },
+    "stream_hdvf_aroundlegs_v": {
+      "expected": 360,
+      "found": 360,
+      "missing": 0,
+      "exists": true,
+      "png_count": 360,
+      "missing_examples": []
+    },
+    "stream_hdvf_longrec_h": {
+      "expected": 556,
+      "found": 556,
+      "missing": 0,
+      "exists": true,
+      "png_count": 556,
+      "missing_examples": []
+    },
+    "stream_hdvf_longrec_v": {
+      "expected": 339,
+      "found": 339,
+      "missing": 0,
+      "exists": true,
+      "png_count": 339,
+      "missing_examples": []
+    },
+    "stream_huvb_aroundarms_h": {
+      "expected": 224,
+      "found": 224,
+      "missing": 0,
+      "exists": true,
+      "png_count": 224,
+      "missing_examples": []
+    },
+    "stream_huvb_aroundarms_v": {
+      "expected": 210,
+      "found": 210,
+      "missing": 0,
+      "exists": true,
+      "png_count": 210,
+      "missing_examples": []
+    },
+    "stream_huvb_aroundhead_h": {
+      "expected": 537,
+      "found": 537,
+      "missing": 0,
+      "exists": true,
+      "png_count": 537,
+      "missing_examples": []
+    },
+    "stream_huvb_aroundhead_v": {
+      "expected": 305,
+      "found": 305,
+      "missing": 0,
+      "exists": true,
+      "png_count": 305,
+      "missing_examples": []
+    },
+    "stream_huvb_aroundlegs_h": {
+      "expected": 364,
+      "found": 364,
+      "missing": 0,
+      "exists": true,
+      "png_count": 364,
+      "missing_examples": []
+    },
+    "stream_huvb_aroundlegs_v": {
+      "expected": 248,
+      "found": 248,
+      "missing": 0,
+      "exists": true,
+      "png_count": 248,
+      "missing_examples": []
+    },
+    "stream_huvb_aroundsbd_h": {
+      "expected": 299,
+      "found": 299,
+      "missing": 0,
+      "exists": true,
+      "png_count": 299,
+      "missing_examples": []
+    },
+    "stream_huvb_longrec_h": {
+      "expected": 597,
+      "found": 597,
+      "missing": 0,
+      "exists": true,
+      "png_count": 597,
+      "missing_examples": []
+    },
+    "stream_huvb_longrec_v": {
+      "expected": 892,
+      "found": 892,
+      "missing": 0,
+      "exists": true,
+      "png_count": 892,
+      "missing_examples": []
+    },
+    "stream_huvf_aroundabd_h": {
+      "expected": 394,
+      "found": 394,
+      "missing": 0,
+      "exists": true,
+      "png_count": 394,
+      "missing_examples": []
+    },
+    "stream_huvf_aroundabd_v": {
+      "expected": 319,
+      "found": 319,
+      "missing": 0,
+      "exists": true,
+      "png_count": 319,
+      "missing_examples": []
+    },
+    "stream_huvf_aroundarms_h": {
+      "expected": 197,
+      "found": 197,
+      "missing": 0,
+      "exists": true,
+      "png_count": 197,
+      "missing_examples": []
+    },
+    "stream_huvf_aroundarms_v": {
+      "expected": 308,
+      "found": 308,
+      "missing": 0,
+      "exists": true,
+      "png_count": 308,
+      "missing_examples": []
+    },
+    "stream_huvf_aroundhead_h": {
+      "expected": 497,
+      "found": 497,
+      "missing": 0,
+      "exists": true,
+      "png_count": 497,
+      "missing_examples": []
+    },
+    "stream_huvf_aroundhead_v": {
+      "expected": 300,
+      "found": 300,
+      "missing": 0,
+      "exists": true,
+      "png_count": 300,
+      "missing_examples": []
+    },
+    "stream_huvf_aroundlegs_h": {
+      "expected": 400,
+      "found": 400,
+      "missing": 0,
+      "exists": true,
+      "png_count": 400,
+      "missing_examples": []
+    },
+    "stream_huvf_aroundlegs_v": {
+      "expected": 301,
+      "found": 301,
+      "missing": 0,
+      "exists": true,
+      "png_count": 301,
+      "missing_examples": []
+    },
+    "stream_huvf_longrec_h": {
+      "expected": 1083,
+      "found": 1083,
+      "missing": 0,
+      "exists": true,
+      "png_count": 1083,
+      "missing_examples": []
+    },
+    "stream_huvf_longrec_v": {
+      "expected": 957,
+      "found": 957,
+      "missing": 0,
+      "exists": true,
+      "png_count": 957,
+      "missing_examples": []
+    }
+  },
+  "class_distribution": {},
+  "expected_split": {
+    "train": 0,
+    "val": 0,
+    "test": 0
+  }
+}

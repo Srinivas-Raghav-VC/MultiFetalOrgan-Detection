@@ -1,0 +1,500 @@
+{
+  "boxes_analysis": {
+    "total_streams": 39,
+    "total_images_in_xmls": 15113,
+    "images_with_boxes": 9455,
+    "images_without_boxes": 5658,
+    "unique_annotated_images": 537,
+    "total_bounding_boxes": 20230,
+    "class_distribution": {
+      "abdomen": 6435,
+      "arm": 4853,
+      "head": 4370,
+      "legs": 4572
+    },
+    "stream_details": {
+      "stream_hdvb_aroundabd_h": {
+        "total_images": 361,
+        "images_with_boxes": 361,
+        "images_without_boxes": 0,
+        "total_boxes": 862,
+        "class_distribution": {
+          "abdomen": 361,
+          "arm": 485,
+          "head": 16
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvb_aroundabd_h\\annotations.xml"
+      },
+      "stream_hdvb_aroundabd_v": {
+        "total_images": 273,
+        "images_with_boxes": 273,
+        "images_without_boxes": 0,
+        "total_boxes": 967,
+        "class_distribution": {
+          "abdomen": 273,
+          "head": 273,
+          "legs": 332,
+          "arm": 89
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvb_aroundabd_v\\annotations.xml"
+      },
+      "stream_hdvb_aroundarms_h": {
+        "total_images": 312,
+        "images_with_boxes": 312,
+        "images_without_boxes": 0,
+        "total_boxes": 871,
+        "class_distribution": {
+          "arm": 536,
+          "abdomen": 283,
+          "head": 52
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvb_aroundarms_h\\annotations.xml"
+      },
+      "stream_hdvb_aroundarms_v": {
+        "total_images": 232,
+        "images_with_boxes": 232,
+        "images_without_boxes": 0,
+        "total_boxes": 667,
+        "class_distribution": {
+          "arm": 221,
+          "head": 160,
+          "legs": 232,
+          "abdomen": 54
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvb_aroundarms_v\\annotations.xml"
+      },
+      "stream_hdvb_aroundhead_h": {
+        "total_images": 284,
+        "images_with_boxes": 284,
+        "images_without_boxes": 0,
+        "total_boxes": 301,
+        "class_distribution": {
+          "head": 281,
+          "abdomen": 20
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvb_aroundhead_h\\annotations.xml"
+      },
+      "stream_hdvb_aroundhead_v": {
+        "total_images": 360,
+        "images_with_boxes": 360,
+        "images_without_boxes": 0,
+        "total_boxes": 848,
+        "class_distribution": {
+          "head": 356,
+          "abdomen": 360,
+          "arm": 132
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvb_aroundhead_v\\annotations.xml"
+      },
+      "stream_hdvb_aroundlegs_h": {
+        "total_images": 269,
+        "images_with_boxes": 269,
+        "images_without_boxes": 0,
+        "total_boxes": 663,
+        "class_distribution": {
+          "abdomen": 147,
+          "legs": 516
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvb_aroundlegs_h\\annotations.xml"
+      },
+      "stream_hdvb_aroundlegs_v": {
+        "total_images": 216,
+        "images_with_boxes": 216,
+        "images_without_boxes": 0,
+        "total_boxes": 258,
+        "class_distribution": {
+          "legs": 216,
+          "abdomen": 42
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvb_aroundlegs_v\\annotations.xml"
+      },
+      "stream_hdvb_longrec_h": {
+        "total_images": 378,
+        "images_with_boxes": 0,
+        "images_without_boxes": 378,
+        "total_boxes": 0,
+        "class_distribution": {},
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvb_longrec_h\\annotations.xml"
+      },
+      "stream_hdvb_longrec_v": {
+        "total_images": 761,
+        "images_with_boxes": 0,
+        "images_without_boxes": 761,
+        "total_boxes": 0,
+        "class_distribution": {},
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvb_longrec_v\\annotations.xml"
+      },
+      "stream_hdvf_aroundabd_h": {
+        "total_images": 359,
+        "images_with_boxes": 359,
+        "images_without_boxes": 0,
+        "total_boxes": 787,
+        "class_distribution": {
+          "abdomen": 359,
+          "legs": 70,
+          "arm": 326,
+          "head": 32
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvf_aroundabd_h\\annotations.xml"
+      },
+      "stream_hdvf_aroundabd_v": {
+        "total_images": 237,
+        "images_with_boxes": 237,
+        "images_without_boxes": 0,
+        "total_boxes": 545,
+        "class_distribution": {
+          "abdomen": 237,
+          "head": 206,
+          "legs": 102
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvf_aroundabd_v\\annotations.xml"
+      },
+      "stream_hdvf_aroundarms_h": {
+        "total_images": 173,
+        "images_with_boxes": 173,
+        "images_without_boxes": 0,
+        "total_boxes": 540,
+        "class_distribution": {
+          "abdomen": 173,
+          "arm": 346,
+          "head": 21
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvf_aroundarms_h\\annotations.xml"
+      },
+      "stream_hdvf_aroundarms_v": {
+        "total_images": 206,
+        "images_with_boxes": 196,
+        "images_without_boxes": 10,
+        "total_boxes": 511,
+        "class_distribution": {
+          "arm": 175,
+          "legs": 114,
+          "head": 184,
+          "abdomen": 38
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvf_aroundarms_v\\annotations.xml"
+      },
+      "stream_hdvf_aroundhead_h": {
+        "total_images": 349,
+        "images_with_boxes": 349,
+        "images_without_boxes": 0,
+        "total_boxes": 349,
+        "class_distribution": {
+          "head": 349
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvf_aroundhead_h\\annotations.xml"
+      },
+      "stream_hdvf_aroundhead_v": {
+        "total_images": 371,
+        "images_with_boxes": 371,
+        "images_without_boxes": 0,
+        "total_boxes": 806,
+        "class_distribution": {
+          "head": 371,
+          "arm": 248,
+          "abdomen": 187
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvf_aroundhead_v\\annotations.xml"
+      },
+      "stream_hdvf_aroundlegs_h": {
+        "total_images": 285,
+        "images_with_boxes": 285,
+        "images_without_boxes": 0,
+        "total_boxes": 812,
+        "class_distribution": {
+          "legs": 539,
+          "abdomen": 273
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvf_aroundlegs_h\\annotations.xml"
+      },
+      "stream_hdvf_aroundlegs_v": {
+        "total_images": 360,
+        "images_with_boxes": 354,
+        "images_without_boxes": 6,
+        "total_boxes": 695,
+        "class_distribution": {
+          "abdomen": 340,
+          "legs": 342,
+          "arm": 13
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvf_aroundlegs_v\\annotations.xml"
+      },
+      "stream_hdvf_longrec_h": {
+        "total_images": 556,
+        "images_with_boxes": 0,
+        "images_without_boxes": 556,
+        "total_boxes": 0,
+        "class_distribution": {},
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvf_longrec_h\\annotations.xml"
+      },
+      "stream_hdvf_longrec_v": {
+        "total_images": 339,
+        "images_with_boxes": 0,
+        "images_without_boxes": 339,
+        "total_boxes": 0,
+        "class_distribution": {},
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_hdvf_longrec_v\\annotations.xml"
+      },
+      "stream_huvb_aroundarms_h": {
+        "total_images": 224,
+        "images_with_boxes": 224,
+        "images_without_boxes": 0,
+        "total_boxes": 498,
+        "class_distribution": {
+          "abdomen": 168,
+          "arm": 220,
+          "head": 110
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvb_aroundarms_h\\annotations.xml"
+      },
+      "stream_huvb_aroundarms_v": {
+        "total_images": 210,
+        "images_with_boxes": 196,
+        "images_without_boxes": 14,
+        "total_boxes": 544,
+        "class_distribution": {
+          "arm": 196,
+          "legs": 188,
+          "head": 89,
+          "abdomen": 71
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvb_aroundarms_v\\annotations.xml"
+      },
+      "stream_huvb_aroundhead_h": {
+        "total_images": 537,
+        "images_with_boxes": 537,
+        "images_without_boxes": 0,
+        "total_boxes": 614,
+        "class_distribution": {
+          "head": 523,
+          "abdomen": 91
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvb_aroundhead_h\\annotations.xml"
+      },
+      "stream_huvb_aroundhead_v": {
+        "total_images": 305,
+        "images_with_boxes": 305,
+        "images_without_boxes": 0,
+        "total_boxes": 590,
+        "class_distribution": {
+          "head": 305,
+          "abdomen": 213,
+          "arm": 72
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvb_aroundhead_v\\annotations.xml"
+      },
+      "stream_huvb_aroundlegs_h": {
+        "total_images": 364,
+        "images_with_boxes": 364,
+        "images_without_boxes": 0,
+        "total_boxes": 929,
+        "class_distribution": {
+          "legs": 699,
+          "abdomen": 230
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvb_aroundlegs_h\\annotations.xml"
+      },
+      "stream_huvb_aroundlegs_v": {
+        "total_images": 248,
+        "images_with_boxes": 248,
+        "images_without_boxes": 0,
+        "total_boxes": 496,
+        "class_distribution": {
+          "legs": 248,
+          "abdomen": 248
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvb_aroundlegs_v\\annotations.xml"
+      },
+      "stream_huvb_aroundsbd_h": {
+        "total_images": 299,
+        "images_with_boxes": 299,
+        "images_without_boxes": 0,
+        "total_boxes": 815,
+        "class_distribution": {
+          "abdomen": 299,
+          "arm": 516
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvb_aroundsbd_h\\annotations.xml"
+      },
+      "stream_huvb_longrec_h": {
+        "total_images": 597,
+        "images_with_boxes": 0,
+        "images_without_boxes": 597,
+        "total_boxes": 0,
+        "class_distribution": {},
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvb_longrec_h\\annotations.xml"
+      },
+      "stream_huvb_longrec_v": {
+        "total_images": 892,
+        "images_with_boxes": 0,
+        "images_without_boxes": 892,
+        "total_boxes": 0,
+        "class_distribution": {},
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvb_longrec_v\\annotations.xml"
+      },
+      "stream_huvf_aroundabd_h": {
+        "total_images": 394,
+        "images_with_boxes": 394,
+        "images_without_boxes": 0,
+        "total_boxes": 1027,
+        "class_distribution": {
+          "abdomen": 394,
+          "arm": 600,
+          "head": 33
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvf_aroundabd_h\\annotations.xml"
+      },
+      "stream_huvf_aroundabd_v": {
+        "total_images": 319,
+        "images_with_boxes": 319,
+        "images_without_boxes": 0,
+        "total_boxes": 412,
+        "class_distribution": {
+          "abdomen": 319,
+          "legs": 93
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvf_aroundabd_v\\annotations.xml"
+      },
+      "stream_huvf_aroundarms_h": {
+        "total_images": 197,
+        "images_with_boxes": 175,
+        "images_without_boxes": 22,
+        "total_boxes": 510,
+        "class_distribution": {
+          "abdomen": 175,
+          "arm": 335
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvf_aroundarms_h\\annotations.xml"
+      },
+      "stream_huvf_aroundarms_v": {
+        "total_images": 308,
+        "images_with_boxes": 292,
+        "images_without_boxes": 16,
+        "total_boxes": 583,
+        "class_distribution": {
+          "abdomen": 121,
+          "arm": 239,
+          "head": 223
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvf_aroundarms_v\\annotations.xml"
+      },
+      "stream_huvf_aroundhead_h": {
+        "total_images": 497,
+        "images_with_boxes": 489,
+        "images_without_boxes": 8,
+        "total_boxes": 572,
+        "class_distribution": {
+          "head": 489,
+          "abdomen": 83
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvf_aroundhead_h\\annotations.xml"
+      },
+      "stream_huvf_aroundhead_v": {
+        "total_images": 300,
+        "images_with_boxes": 300,
+        "images_without_boxes": 0,
+        "total_boxes": 659,
+        "class_distribution": {
+          "head": 297,
+          "abdomen": 280,
+          "arm": 82
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvf_aroundhead_v\\annotations.xml"
+      },
+      "stream_huvf_aroundlegs_h": {
+        "total_images": 400,
+        "images_with_boxes": 381,
+        "images_without_boxes": 19,
+        "total_boxes": 908,
+        "class_distribution": {
+          "legs": 591,
+          "abdomen": 317
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvf_aroundlegs_h\\annotations.xml"
+      },
+      "stream_huvf_aroundlegs_v": {
+        "total_images": 301,
+        "images_with_boxes": 301,
+        "images_without_boxes": 0,
+        "total_boxes": 591,
+        "class_distribution": {
+          "legs": 290,
+          "abdomen": 279,
+          "arm": 22
+        },
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvf_aroundlegs_v\\annotations.xml"
+      },
+      "stream_huvf_longrec_h": {
+        "total_images": 1083,
+        "images_with_boxes": 0,
+        "images_without_boxes": 1083,
+        "total_boxes": 0,
+        "class_distribution": {},
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvf_longrec_h\\annotations.xml"
+      },
+      "stream_huvf_longrec_v": {
+        "total_images": 957,
+        "images_with_boxes": 0,
+        "images_without_boxes": 957,
+        "total_boxes": 0,
+        "class_distribution": {},
+        "xml_path": "C:\\Users\\Srinivas's G14\\Downloads\\SAE_2\\FPUS23_Dataset\\Dataset\\boxes\\annotation\\stream_huvf_longrec_v\\annotations.xml"
+      }
+    }
+  },
+  "existence_check": {
+    "found": 9455,
+    "missing": 0,
+    "missing_examples": []
+  },
+  "split_simulation": {
+    "train": 7263,
+    "val": 629,
+    "test": 1563,
+    "train_streams": [
+      "stream_huvb_aroundhead_v",
+      "stream_huvf_aroundhead_h",
+      "stream_hdvb_aroundarms_v",
+      "stream_hdvf_aroundabd_v",
+      "stream_hdvf_aroundabd_h",
+      "stream_huvf_aroundlegs_h",
+      "stream_huvb_longrec_v",
+      "stream_huvf_aroundabd_v",
+      "stream_huvf_aroundarms_h",
+      "stream_huvb_aroundhead_h",
+      "stream_huvb_aroundsbd_h",
+      "stream_huvb_aroundarms_v",
+      "stream_hdvf_aroundarms_h",
+      "stream_hdvb_aroundhead_h",
+      "stream_hdvb_longrec_v",
+      "stream_huvf_aroundhead_v",
+      "stream_huvb_aroundlegs_h",
+      "stream_huvf_aroundabd_h",
+      "stream_huvb_aroundarms_h",
+      "stream_huvb_aroundlegs_v",
+      "stream_huvf_aroundlegs_v",
+      "stream_huvb_longrec_h",
+      "stream_hdvf_longrec_v",
+      "stream_hdvf_aroundlegs_h",
+      "stream_huvf_longrec_v",
+      "stream_huvf_aroundarms_v",
+      "stream_hdvb_aroundarms_h",
+      "stream_hdvb_aroundabd_h",
+      "stream_huvf_longrec_h",
+      "stream_hdvf_aroundarms_v",
+      "stream_hdvf_longrec_h"
+    ],
+    "val_streams": [
+      "stream_hdvb_aroundhead_v",
+      "stream_hdvb_aroundlegs_h",
+      "stream_hdvb_longrec_h"
+    ],
+    "test_streams": [
+      "stream_hdvf_aroundhead_h",
+      "stream_hdvf_aroundhead_v",
+      "stream_hdvf_aroundlegs_v",
+      "stream_hdvb_aroundabd_v",
+      "stream_hdvb_aroundlegs_v"
+    ]
+  }
+}

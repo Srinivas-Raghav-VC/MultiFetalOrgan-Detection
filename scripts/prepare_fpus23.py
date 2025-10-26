@@ -239,6 +239,7 @@ def _voc_size_from_xml(xml_file: Path) -> Tuple[Optional[int], Optional[int]]:
 def convert_xml_to_yolo(xml_file: Path, output_label: Path, img_w: int, img_h: int,
                         drop_stats: dict) -> bool:
     try:
+        etree = _get_etree()
         root = etree.parse(str(xml_file)).getroot()
         yolo_lines = []
         voc_objects = root.findall('.//object')
@@ -308,8 +309,10 @@ def yolo_to_coco(yolo_root: Path, split: str, out_json: Path, one_based: bool = 
         with Image.open(img_file) as im:
             w, h = im.size
         coco['images'].append({'id': img_id, 'file_name': img_file.name, 'width': w, 'height': h})
-        dest = out_json.parent / img_file.name
-        dest.parent.mkdir(parents=True, exist_ok=True)
+        # Copy image to split-specific COCO folder (e.g., COCO_ROOT/train)
+        split_dir = out_json.parent / split
+        split_dir.mkdir(parents=True, exist_ok=True)
+        dest = split_dir / img_file.name
         if not dest.exists():
             shutil.copy(img_file, dest)
         lab = labels_dir / (img_file.stem + '.txt')
@@ -361,6 +364,7 @@ def main():
     class_counts = collections.defaultdict(int); unknown = collections.Counter(); total = 0
     for xf in tqdm(xmls, desc='Scanning labels'):
         try:
+            etree = _get_etree()
             rt = etree.parse(str(xf)).getroot()
             voc = rt.findall('.//object')
             if voc:
@@ -546,7 +550,10 @@ def main():
                         out_lab.write_text('\n'.join(yolo_lines))
                     drop['written'] += 1; ok += 1
             print(f"YOLO conversion ({split_name}): {ok}/{len(lst)} annotations")
-    print(f" - Dropped zero-area: {drop['zero']} | Clamped OOB: {drop['oob']} | Labels written: {drop['written']}")
+    if args.dry_run:
+        print(f"DRY-RUN: computed stats only. Would drop zero-area: {drop['zero']} | clamp OOB: {drop['oob']} | labels to write: {drop['written']}")
+    else:
+        print(f" - Dropped zero-area: {drop['zero']} | Clamped OOB: {drop['oob']} | Labels written: {drop['written']}")
 
     # Optional minority-class augmentation (intensity only, bbox-safe)
     if args.augment_minority and not args.dry_run and cv2 is not None:
@@ -626,10 +633,15 @@ def main():
                 added += 1
             print(f"Augmented class {c}: +{added} images (target {target_add})")
 
-    # data.yaml
+    # data.yaml (quote path to survive spaces and apostrophes on Windows)
     if not args.dry_run:
+        try:
+            yroot = YOLO_ROOT.resolve()
+        except Exception:
+            yroot = YOLO_ROOT
+        path_str = str(yroot).replace('\\', '/')  # use POSIX separators for YAML safety
         data_yaml = (
-            f"path: {YOLO_ROOT}\n"
+            f"path: \"{path_str}\"\n"
             "train: images/train\nval: images/val\ntest: images/test\n\n"
             f"nc: {len(CLASSES)}\n"
             f"names: {CLASSES}\n"
