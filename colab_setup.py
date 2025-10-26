@@ -141,23 +141,34 @@ def validate_dataset(dataset_path):
     return dataset_path
 
 
-def setup_colab_environment():
-    """Install required packages for Colab"""
+def setup_colab_environment(requirements_file: Path | None = None):
+    """Install required packages for Colab.
+
+    If a requirements file is provided, install from it; otherwise install a safe default set.
+    """
     print(f"\n📦 Installing dependencies...")
 
+    if requirements_file and Path(requirements_file).exists():
+        print(f"   Using requirements file: {requirements_file}")
+        subprocess.run([sys.executable, "-m", "pip", "install", "-r", str(requirements_file), "-q"], check=True)
+        print(f"✅ Requirements installed")
+        return
+
     packages = [
-        "ultralytics",  # YOLO
-        "lxml",         # XML parsing
-        "scikit-learn", # K-means for anchors
-        "matplotlib",   # Plotting
-        "tqdm",         # Progress bars
-        "opencv-python" # Image processing
+        "ultralytics>=8.3.0,<9",
+        "lxml",
+        "scikit-learn",
+        "matplotlib",
+        "tqdm",
+        "opencv-python-headless",
+        "pycocotools",
+        "pillow",
+        "pyyaml",
     ]
 
     for package in packages:
         print(f"   Installing {package}...")
-        subprocess.run([sys.executable, "-m", "pip", "install", package, "-q"],
-                      check=True)
+        subprocess.run([sys.executable, "-m", "pip", "install", package, "-q"], check=True)
 
     print(f"✅ All dependencies installed")
 
@@ -312,6 +323,12 @@ def main():
         help="Skip training (just setup)"
     )
 
+    parser.add_argument(
+        "--first-run",
+        action="store_true",
+        help="Skip advanced steps (anchors, balancing) for a fast first training"
+    )
+
     args = parser.parse_args()
 
     print("="*80)
@@ -325,11 +342,12 @@ def main():
     dataset_dir = colab_root / "FPUS23_Dataset"
     project_dir = colab_root / "fpus23_project"
 
-    # Step 1: Install dependencies
-    setup_colab_environment()
-
-    # Step 2: Clone GitHub repo
+    # Step 1: Clone GitHub repo first (so we can use its requirements file)
     clone_github_repo(args.github_repo, repo_dir)
+
+    # Step 2: Install dependencies (use repo's requirements_colab.txt if present)
+    req_file = repo_dir / "requirements_colab.txt"
+    setup_colab_environment(req_file)
 
     # Step 3: Download dataset
     if not args.skip_download:
@@ -359,14 +377,22 @@ def main():
         print(f"❌ Dataset preparation failed")
         sys.exit(1)
 
-    # Step 8: Calculate anchors
+    # Step 8: Sanity check YOLO dataset
     data_yaml = project_dir / "dataset" / "fpus23_yolo" / "data.yaml"
-    anchors_yaml = calculate_anchors(scripts_dir, data_yaml)
+    verify_script = scripts_dir / "tools" / "verify_yolo_dataset.py"
+    if verify_script.exists():
+        run_command([sys.executable, str(verify_script), "--data", str(data_yaml), "--split", "val", "--limit", "24"],
+                    "Verify YOLO dataset (val split)")
 
-    # Step 9: Balance dataset
-    balanced = balance_dataset(scripts_dir)
+    # Optional advanced steps (anchors/balancing) – can be skipped for first run
+    first_run = args.first_run or (os.environ.get("FPUS23_FIRST_RUN", "0") == "1")
+    anchors_yaml = None
+    balanced = False
+    if not first_run:
+        anchors_yaml = calculate_anchors(scripts_dir, data_yaml)
+        balanced = balance_dataset(scripts_dir)
 
-    # Step 10: Start training
+    # Step 9: Start training
     if not args.skip_training:
         start_training(scripts_dir, data_yaml, anchors_yaml, balanced)
     else:

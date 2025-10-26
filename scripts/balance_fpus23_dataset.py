@@ -15,7 +15,17 @@ FPUS23 class distribution:
 Expected improvement: +2-3% AP for underrepresented classes
 
 Usage:
+    # Auto-detect COCO produced by prepare_fpus23.py
     python scripts/balance_fpus23_dataset.py
+
+    # Explicit (recommended)
+    python scripts/balance_fpus23_dataset.py \
+      --coco-root /path/to/fpus23_coco
+
+    # Or fully explicit
+    python scripts/balance_fpus23_dataset.py \
+      --annotations /path/to/train.json \
+      --images /path/to/train_images_dir
 
 Output:
     - fpus23_coco/images_balanced/train/ (balanced images)
@@ -28,6 +38,7 @@ import shutil
 import json
 import numpy as np
 from pathlib import Path
+import argparse
 from collections import Counter
 from tqdm import tqdm
 
@@ -247,31 +258,88 @@ def balance_dataset(
     print(f"   JSON:   {output_json_path}")
 
 
+def _autodetect_coco_paths(coco_root_hint: Path | None) -> tuple[Path, Path, Path, Path] | None:
+    """Return (train_json, images_dir, out_images_dir, out_json) if found.
+
+    Supports both layouts:
+      - Flat (prepare_fpus23.py): fpus23_coco/train.json and fpus23_coco/train
+      - Classic: fpus23_coco/annotations/train.json and fpus23_coco/images/train
+    Searches common locations near CWD if hint not provided.
+    """
+    candidates = []
+    roots = []
+    if coco_root_hint:
+        roots.append(coco_root_hint)
+    # common default produced by prepare_fpus23.py
+    roots.append(Path.cwd() / "fpus23_coco")
+    # common Colab path
+    roots.append(Path("/content/fpus23_project/dataset/fpus23_coco"))
+    # walk up a couple levels to look for dataset/fpus23_coco
+    for up in [Path.cwd().parent, Path.cwd().parent.parent]:
+        if (up / "dataset" / "fpus23_coco").exists():
+            roots.append(up / "dataset" / "fpus23_coco")
+
+    for root in roots:
+        if not root:
+            continue
+        # flat
+        j_flat = root / "train.json"
+        d_flat = root / "train"
+        if j_flat.exists() and d_flat.exists():
+            out_images = root / "images_balanced" / "train"
+            out_json = root / "train_balanced.json"
+            return j_flat, d_flat, out_images, out_json
+        # classic
+        j_ann = root / "annotations" / "train.json"
+        d_img = root / "images" / "train"
+        if j_ann.exists() and d_img.exists():
+            out_images = root / "images_balanced" / "train"
+            out_json = root / "annotations" / "train_balanced.json"
+            return j_ann, d_img, out_images, out_json
+    return None
+
+
 def main():
     """Main execution"""
     print("=" * 80)
     print("FPUS23 Dataset Balancer")
     print("=" * 80)
 
-    # Paths
-    train_json = Path('fpus23_coco/annotations/train.json')
-    images_dir = Path('fpus23_coco/images/train')
-    output_images_dir = Path('fpus23_coco/images_balanced/train')
-    output_json = Path('fpus23_coco/annotations/train_balanced.json')
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--coco-root", type=str, default=None,
+                    help="Path to fpus23_coco root produced by prepare_fpus23.py")
+    ap.add_argument("--annotations", type=str, default=None,
+                    help="Explicit path to COCO train.json")
+    ap.add_argument("--images", type=str, default=None,
+                    help="Explicit path to COCO train images directory")
+    args = ap.parse_args()
 
-    # Check if data exists
-    if not train_json.exists():
-        print(f"\n❌ Error: Training annotations not found at {train_json}")
-        print("\nPlease ensure your FPUS23 dataset is in COCO format:")
-        print("  fpus23_coco/")
-        print("    annotations/")
-        print("      train.json")
-        print("    images/")
-        print("      train/")
+    train_json: Path | None = None
+    images_dir: Path | None = None
+    output_images_dir: Path | None = None
+    output_json: Path | None = None
+
+    if args.annotations and args.images:
+        train_json = Path(args.annotations)
+        images_dir = Path(args.images)
+        # default outputs next to annotations/images
+        root = train_json.parent.parent if (train_json.parent.name == "annotations") else train_json.parent
+        output_images_dir = root / "images_balanced" / "train"
+        output_json = (train_json.parent / "train_balanced.json") if (train_json.parent.name == "annotations") else (root / "train_balanced.json")
+    else:
+        hint = Path(args.coco_root) if args.coco_root else None
+        detected = _autodetect_coco_paths(hint)
+        if detected:
+            train_json, images_dir, output_images_dir, output_json = detected
+    
+    if not train_json or not images_dir:
+        print("\n❌ Could not locate COCO train.json and images/train. Provide --coco-root or both --annotations and --images.")
         return
-
+    if not train_json.exists():
+        print(f"\n❌ Training annotations not found: {train_json}")
+        return
     if not images_dir.exists():
-        print(f"\n❌ Error: Training images not found at {images_dir}")
+        print(f"\n❌ Training images directory not found: {images_dir}")
         return
 
     # Analyze distribution
@@ -310,10 +378,8 @@ def main():
     print(f"\nExpected improvement: +2-3% AP for underrepresented classes")
     print(f"\nNext steps:")
     print(f"  1. Verify balanced images: {output_images_dir}")
-    print(f"  2. Train with balanced data:")
-    print(f"     python scripts/train_yolo_fpus23.py \\")
-    print(f"       --data fpus23_coco/annotations/train_balanced.json \\")
-    print(f"       --epochs 100 --batch 16 --imgsz 768")
+    print(f"  2. Note: Ultralytics YOLO trains from YOLO data.yaml. Balanced COCO JSON is for analysis or other frameworks.")
+    print(f"     To use balancing in YOLO, convert balanced COCO back to YOLO or use class-weighting/oversampling in loader.")
 
 
 if __name__ == '__main__':

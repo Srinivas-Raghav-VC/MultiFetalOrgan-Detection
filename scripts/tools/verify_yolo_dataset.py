@@ -105,7 +105,15 @@ def main():
         print(f'Missing split path for {args.split} in data.yaml', file=sys.stderr)
         sys.exit(2)
 
+    print(f"YOLO root: {root}")
+    print(f"Split rel : {split_rel}")
     images, mapped_labels, all_labels = load_yolo_split(root, split_rel)
+    img_dir = root / split_rel
+    lab_dir = root / split_rel.replace('images/', 'labels/')
+    # Extension breakdown for debugging
+    by_ext = {}
+    for p in images:
+        by_ext[p.suffix] = by_ext.get(p.suffix, 0) + 1
     missing_labels = [p for p, l in zip(images, mapped_labels) if not l.exists()]
     # Also detect labels that don't have a corresponding image
     image_stems = {p.stem for p in images}
@@ -115,11 +123,17 @@ def main():
     print(f" - Labels: {len(all_labels)}")
     print(f" - Missing label files: {len(missing_labels)}")
     print(f" - Orphan labels (no image): {len(orphan_labels)}")
+    print(f" - Image dir: {img_dir}")
+    print(f" - Label dir: {lab_dir}")
+    if by_ext:
+        print(" - Image ext breakdown:")
+        for k, v in sorted(by_ext.items()):
+            print(f"    {k}: {v}")
 
     if args.vis_out and Image is not None:
         out_dir = Path(args.vis_out)
         out_dir.mkdir(parents=True, exist_ok=True)
-        for i, (img_p, lab_p) in enumerate(zip(images, labels)):
+        for i, (img_p, lab_p) in enumerate(zip(images, mapped_labels)):
             if i >= args.limit:
                 break
             try:

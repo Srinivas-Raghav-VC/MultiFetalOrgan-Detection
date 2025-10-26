@@ -179,7 +179,7 @@ def create_training_config(args, anchors=None):
         # Augmentation (medical imaging appropriate)
         'hsv_h': 0.0,     # HSV-Hue (disabled for grayscale)
         'hsv_s': 0.0,     # HSV-Saturation (disabled)
-        'hsv_v': 0.3,     # HSV-Value (slight brightness variation)
+        'hsv_v': 0.0,     # HSV-Value (disabled for grayscale ultrasound)
         'degrees': 10.0,  # Rotation (±10 degrees)
         'translate': 0.1, # Translation (±10%)
         'scale': 0.5,     # Scale (±50%)
@@ -187,8 +187,8 @@ def create_training_config(args, anchors=None):
         'perspective': 0.0, # Perspective (disabled for medical)
         'flipud': 0.0,    # Vertical flip (disabled - anatomical consistency)
         'fliplr': 0.5,    # Horizontal flip (50% - left/right symmetry ok)
-        'mosaic': 0.5,    # Mosaic augmentation
-        'mixup': 0.1,     # Mixup augmentation
+        'mosaic': 0.0,    # Mosaic disabled (medical images)
+        'mixup': 0.0,     # Mixup disabled (medical images)
 
         # Validation
         'val': True,
@@ -197,7 +197,7 @@ def create_training_config(args, anchors=None):
         'patience': 50,     # Early stopping patience
 
         # Performance
-        'workers': 8,
+        'workers': 2,
         'amp': not args.no_amp,  # Automatic Mixed Precision
         'cache': False,  # Don't cache images (may OOM on large datasets)
 

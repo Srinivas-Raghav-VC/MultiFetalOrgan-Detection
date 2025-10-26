@@ -18,7 +18,8 @@ Go to [https://colab.research.google.com](https://colab.research.google.com)
 %cd /content/fpus23_repo
 !python colab_setup.py \
     --github-repo https://github.com/Srinivas-Raghav-VC/MultiFetalOrgan-Detection.git \
-    --drive-file-id 1LL-r2hNiP6C190UBSE4v1FFCF3OQT9N3
+    --drive-file-id 1LL-r2hNiP6C190UBSE4v1FFCF3OQT9N3 \
+    --first-run
 ```
 
 **That's it!** The script will:
@@ -26,8 +27,9 @@ Go to [https://colab.research.google.com](https://colab.research.google.com)
 ✅ Extract and validate
 ✅ Install all dependencies
 ✅ Prepare dataset (XML → YOLO → COCO)
-✅ Calculate custom anchors
-✅ Balance dataset
+✅ Sanity-check YOLO dataset
+⬜ Calculate custom anchors (later)
+⬜ Balance dataset (later)
 ✅ Start training
 
 Training time: **~8-12 hours** (will run even if you close browser)
@@ -42,8 +44,8 @@ Training time: **~8-12 hours** (will run even if you close browser)
 !git clone https://github.com/Srinivas-Raghav-VC/MultiFetalOrgan-Detection.git /content/fpus23
 %cd /content/fpus23
 
-# Install dependencies
-!pip install ultralytics lxml scikit-learn gdown opencv-python -q
+# Install dependencies (pinned)
+!pip -q install -r /content/fpus23/requirements_colab.txt
 
 # Verify GPU
 import torch
@@ -92,7 +94,7 @@ drive.mount('/content/drive')
 !ls -lh /content/fpus23_project/dataset/fpus23_yolo/
 ```
 
-### Cell 4: Calculate Custom Anchors
+### Cell 4: (Optional later) Calculate Custom Anchors
 ```python
 %cd /content/fpus23_project
 
@@ -105,7 +107,7 @@ drive.mount('/content/drive')
 !cat outputs/fpus23_anchors.yaml
 ```
 
-### Cell 5: Balance Dataset
+### Cell 5: (Optional later) Balance Dataset
 ```python
 # Balance dataset (15 minutes)
 !python /content/fpus23/scripts/balance_fpus23_dataset.py
@@ -116,12 +118,10 @@ drive.mount('/content/drive')
 
 ### Cell 6: Start Training
 ```python
-# Train YOLO Phase 1 (8-12 hours)
+# Train YOLO Phase 1 (first run - no anchors/balancing)
 !python /content/fpus23/scripts/train_yolo_fpus23_phase1.py \
     --data /content/fpus23_project/dataset/fpus23_yolo/data.yaml \
-    --model yolo11n.pt \
-    --custom-anchors /content/fpus23_project/outputs/fpus23_anchors.yaml \
-    --balanced-data /content/fpus23_project/dataset/fpus23_coco/annotations/train_balanced.json \
+    --model yolo11s.pt \
     --epochs 100 \
     --batch 16 \
     --imgsz 768 \
